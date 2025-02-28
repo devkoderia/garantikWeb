@@ -4,8 +4,7 @@ import { MRT_Localization_PT_BR } from 'material-react-table/locales/pt-BR';
 import LoaderIcon from 'react-loading-icons'
 
 
-const ProdutorLista = () => {
-
+const FormLista = () => {
 
 
 
@@ -77,25 +76,6 @@ const ProdutorLista = () => {
     return (
 
         <div>
-
-
-            
-
-                <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-					<div className="breadcrumb-title pe-3">Garantia</div>
-					<div className="ps-3">
-						<nav aria-label="breadcrumb">
-							<ol className="breadcrumb mb-0 p-0">
-								
-								<li className="breadcrumb-item active" aria-current="page">Produtor</li>
-							</ol>
-						</nav>
-					</div>
-					
-				</div>
-
-
-                    
 
 
 
@@ -173,8 +153,9 @@ const ProdutorLista = () => {
 
         </div>
 
+
     )
 
 }
 
-export default ProdutorLista
+export default FormLista

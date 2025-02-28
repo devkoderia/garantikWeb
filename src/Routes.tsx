@@ -4,9 +4,11 @@ import Layout from './components/Layout'
 
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
-import ProdutorCadastro from './pages/ProdutorCadastro'
-import ProdutorLista from './pages/ProdutorLista'
 import UsuariosLista from './pages/UsuariosLista'
+
+import Cadastro from './pages/Cadastro'
+import Lista from './pages/Lista'
+
 
 const Rotas = () => {
 
@@ -22,9 +24,13 @@ const Rotas = () => {
 
                     
                     <Route path='/Dashboard' element={<Dashboard />} />
-                    <Route path='/Produtor/Cadastro' element={<ProdutorCadastro />} />
-                    <Route path='/Produtor/Lista' element={<ProdutorLista />} />
-                    <Route path='/Usuarios/Lista' element={<UsuariosLista />} />
+                    <Route path='/Produtor/Cadastro' element={<Cadastro tipo='Produtor' />} />
+                    <Route path='/Corretor/Cadastro' element={<Cadastro tipo='Corretor' />} />
+                    
+                    <Route path='/Produtor/Lista' element={<Lista tipo='Produtor' />} />
+                    <Route path='/Corretor/Lista' element={<Lista tipo='Corretor' />} />
+
+                    <Route path='/Usuarios/Lista' element={<Lista tipo='Corretor' />} />
 
 
                 </Route>

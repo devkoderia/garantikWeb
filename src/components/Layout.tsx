@@ -30,13 +30,13 @@ const Layout = () => {
                             <img src="/assets/images/avatars/01.png" className="rounded-circle p-1 border" width="45" height="45" alt="" />
                             </a>
                             <div className="dropdown-menu dropdown-user dropdown-menu-end shadow">
-                            <a className="dropdown-item  gap-2 py-2" href="javascript:;">
+                            <div className="dropdown-item  gap-2 py-2">
                                 <div className="text-center">
                                 <img src="/assets/images/avatars/01.png" className="rounded-circle p-1 shadow mb-3" width="90" height="90"
                                     alt="" />
                                 <h5 className="user-name mb-0 fw-bold">Olá, John</h5>
                                 </div>
-                            </a>
+                            </div>
                             <hr className="dropdown-divider" />
                             <a className="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:;"><i
                                 className="material-icons-outlined">person_outline</i>Perfil</a>
@@ -149,10 +149,20 @@ const Layout = () => {
                 </ul>
                 </li>
 
+                <li className="nav-item dropend">
+                <a className="dropdown-item dropdown-toggle dropdown-toggle-nocaret" href="javascript:;"><i className='material-icons-outlined'>note_alt</i>Fiança</a>
+                <ul className="dropdown-menu submenu">
+                    
+                    <li><a className="dropdown-item" href="/Fianca/Lista"><i className='material-icons-outlined'>source</i>Cadastrar</a></li>
+                    
+                    
+                </ul>
+                </li>
+
 
             </ul>
             </li>
-            <li className="nav-item dropdown">
+            <li className="nav-item dropdown" style={{ display: 'none'}}>
             <a className="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
                 <div className="parent-icon"><i className='material-icons-outlined'>note_alt</i>
                 </div>

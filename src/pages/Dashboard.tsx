@@ -10,21 +10,21 @@ const Home = () => {
                     <form className="row g-3">
                         <div className="col-md-4">
                             
-                            <select  className="form-control">
+                            <select  className="form-control" style={{ backgroundColor: '#f4f2ff'}}>
                                 <option value="">[Ano]</option>
 
                             </select>
                         </div>
                         <div className="col-md-4">
                             
-                            <select  className="form-control">
+                            <select  className="form-control"  style={{ backgroundColor: '#f4f2ff'}}>
                                 <option value="">[Mês]</option>
 
                             </select>
                         </div>
                         <div className="col-md-4">
                             
-                            <select className="form-control">
+                            <select className="form-control"  style={{ backgroundColor: '#f4f2ff'}}>
                                 <option value="">[Corretor]</option>
 
                             </select>
