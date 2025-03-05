@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react"
-import FormPF from "../componentsPage/FormPF"
-import FormPJ from "../componentsPage/FormPJ"
+import FormCadastro from "../componentsPage/FormCadastro"
 
-const FormEscolhe = () => {
+const FormEscolhe = (props: any) => {
 
     const [tipoJuridico, setTipoJuridico] = useState<string>('')
+
 
     return (
 
         <div>
 
-
+            
                 <form className="row g-3">
                     <div className="col-md-12">
                         
@@ -18,6 +18,7 @@ const FormEscolhe = () => {
                             <option value="">[Informe o tipo jurídico]</option>
                             <option value="F">Pessoa Física</option>
                             <option value="J">Pessoa Jurídica</option>
+                            <option value="O" style={{ display: props.tipo == 'Afiançado' ? 'table-row' : 'none'}}>Outro</option>
 
                         </select>
                     </div>
@@ -30,29 +31,7 @@ const FormEscolhe = () => {
 							<div className="card-body p-4">
 
 
-                            {
-
-                                tipoJuridico == 'F' ?
-                                (
-                                    <FormPF />
-                                ) 
-                                
-                                :
-                                
-                                tipoJuridico == 'J' ?
-                                
-                                (
-
-                                    <FormPJ />
-
-                                )
-                                
-                                :
-
-                                null
-
-                            }
-                            
+                                <FormCadastro tipoJuridico={tipoJuridico} tipo={props.tipo} />
                                 
                                                     
             

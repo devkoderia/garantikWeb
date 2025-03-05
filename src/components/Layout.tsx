@@ -1,6 +1,13 @@
+import { useState, useEffect } from "react"
 import { Outlet, Link } from "react-router-dom"
+import { Toaster } from 'react-hot-toast'
+import ModalSenha from "../modals/ModalSenha"
+import moment from 'moment'
 
 const Layout = () => {
+
+    const [show, setShow] = useState(false)
+	const [now, setNow] = useState<string>('')
 
     return (
 
@@ -27,12 +34,12 @@ const Layout = () => {
 
                         <li className="nav-item dropdown">
                             <a href="javascrpt:;" className="dropdown-toggle dropdown-toggle-nocaret" data-bs-toggle="dropdown">
-                            <img src="/assets/images/avatars/01.png" className="rounded-circle p-1 border" width="45" height="45" alt="" />
+                            <img src="/assets/images/avatars/avatarDefault.png" className="rounded-circle p-1 border" width="45" height="45" alt="" />
                             </a>
                             <div className="dropdown-menu dropdown-user dropdown-menu-end shadow">
                             <div className="dropdown-item  gap-2 py-2">
                                 <div className="text-center">
-                                <img src="/assets/images/avatars/01.png" className="rounded-circle p-1 shadow mb-3" width="90" height="90"
+                                <img src="/assets/images/avatars/avatarDefault.png" className="rounded-circle p-1 shadow mb-3" width="90" height="90"
                                     alt="" />
                                 <h5 className="user-name mb-0 fw-bold">Olá, John</h5>
                                 </div>
@@ -40,8 +47,8 @@ const Layout = () => {
                             <hr className="dropdown-divider" />
                             <a className="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:;"><i
                                 className="material-icons-outlined">person_outline</i>Perfil</a>
-                            <a className="dropdown-item d-flex align-items-center gap-2 py-2" href="javascript:;"><i
-                                className="material-icons-outlined">key</i>Senha</a>
+                            <Link to='#' className="dropdown-item d-flex align-items-center gap-2 py-2" onClick={() => {setNow(moment().format('YYYY-MM-DD HH:mm:ss'));setShow(true)}}><i
+                                className="material-icons-outlined">key</i>Senha</Link>
                             
                             <hr className="dropdown-divider" />
                             <Link className="dropdown-item d-flex align-items-center gap-2 py-2" to='/'><i
@@ -123,8 +130,8 @@ const Layout = () => {
                 <a className="dropdown-item dropdown-toggle dropdown-toggle-nocaret" href="javascript:;"><i className='material-icons-outlined'>source</i>Afiançado</a>
                 <ul className="dropdown-menu submenu">
                     
-                    <li><a className="dropdown-item" href="/Afiancado/Cadastrar"><i className='material-icons-outlined'>integration_instructions</i>Cadastrar</a></li>
-                    <li><a className="dropdown-item" href="/Afiancado/Listar"><i className='material-icons-outlined'>hourglass_empty</i>Listar</a></li>                    
+                    <li><a className="dropdown-item" href="/Afiancado/Cadastro"><i className='material-icons-outlined'>integration_instructions</i>Cadastrar</a></li>
+                    <li><a className="dropdown-item" href="/Afiancado/Lista"><i className='material-icons-outlined'>hourglass_empty</i>Listar</a></li>                    
                     
                 </ul>
                 </li>
@@ -227,6 +234,37 @@ const Layout = () => {
 
         </div>
     </main>
+
+
+    <ModalSenha show={show} now={now} setShow={setShow} />
+
+
+
+    <Toaster
+        position="top-right" // Posição no canto superior direito
+        toastOptions={{
+            style: {
+                padding: "16px",
+                color: "#fff",
+            },
+            success: {
+                style: {
+                    background: "#4caf50", // Verde
+                },
+            },
+            error: {
+                style: {
+                    background: "#f44336", // Vermelho
+                },
+            },
+            loading: {
+                style: {
+                    background: "#ff9800", // Laranja
+                },
+            },
+
+        }}
+    />
 
 
 

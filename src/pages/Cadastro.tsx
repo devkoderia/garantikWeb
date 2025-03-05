@@ -1,6 +1,6 @@
 import FormEscolhe from '../componentsPage/FormEscolhe'
 
-const ProdutorCadastro = (props: any) => {
+const Cadastro = (props: any) => {
 
 
 
@@ -24,7 +24,7 @@ const ProdutorCadastro = (props: any) => {
 				</div>
 
 
-                <FormEscolhe />
+                <FormEscolhe tipo={props.tipo} />
 
 
 
@@ -39,4 +39,4 @@ const ProdutorCadastro = (props: any) => {
 }
 
 
-export default ProdutorCadastro
+export default Cadastro

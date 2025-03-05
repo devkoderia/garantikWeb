@@ -1,12 +1,46 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom"
+import toast, { Toaster } from 'react-hot-toast';
 
 const LoginPage = () => {
 
 
     const navigate = useNavigate()
 
+    const [email, setEmail] = useState<string>('')
+    const [senha, setSenha] = useState<string>('')
+
+
 
     const login = () => {
+
+        if (email == '') {
+
+
+            toast.error('Por favor, informe o e-mail!')
+            
+            return false
+
+        }
+
+
+        if (senha == '') {
+
+
+            toast.error('Por favor, informe a senha!')
+            
+            return false
+
+        }
+
+        var dataPost = {
+
+            email: email,
+            senha: senha,
+
+        }
+
+        console.log(dataPost)
 
         navigate('/Dashboard')
 
@@ -30,12 +64,24 @@ const LoginPage = () => {
                                     <form className="row g-3">
                                         <div className="col-12">
                                             <label className="form-label">Email</label>
-                                            <input type="email" className="form-control" placeholder="seu@email.com" />
+                                            <input type="email" className="form-control" value={email} onChange={event => setEmail(event.target.value)} placeholder="seu@email.com" 
+                                            onKeyPress={(e) => {
+                                                if (e.key === "Enter") {
+                                                    login()                                            
+                                                }
+                                            }}
+                                            />
                                         </div>
                                         <div className="col-12">
                                             <label className="form-label">Senha</label>
                                             <div className="input-group" id="show_hide_password">
-                                                <input type="password" className="form-control"  placeholder="Informe sua senha" /> 
+                                                <input type="password" className="form-control" value={senha} onChange={event => setSenha(event.target.value)}  placeholder="Informe sua senha" 
+                                                onKeyPress={(e) => {
+                                                    if (e.key === "Enter") {
+                                                        login()                                            
+                                                    }
+                                                }}
+                                                /> 
                                                 
                                             </div>
                                         </div>
@@ -49,7 +95,13 @@ const LoginPage = () => {
                                         </div>
                                         <div className="col-12">
                                             <div className="d-grid">
-                                                <button type="button" className="btn btn-info px-5" onClick={login}>Login</button>
+                                                <button type="button" className="btn btn-info px-5" onClick={login}
+                                                onKeyPress={(e) => {
+                                                    if (e.key === "Enter") {
+                                                        login()                                            
+                                                    }
+                                                }}
+                                                >Login</button>
                                             </div>
                                         </div>
                                         
@@ -65,6 +117,34 @@ const LoginPage = () => {
                     </div>
                     </div>
 
+
+
+
+					<Toaster
+						position="top-right" // Posição no canto superior direito
+						toastOptions={{
+							style: {
+								padding: "16px",
+								color: "#fff",
+							},
+							success: {
+								style: {
+									background: "#4caf50", // Verde
+								},
+							},
+							error: {
+								style: {
+									background: "#f44336", // Vermelho
+								},
+							},
+							loading: {
+								style: {
+									background: "#ff9800", // Laranja
+								},
+							},
+
+						}}
+					/>
 
         </div>
 

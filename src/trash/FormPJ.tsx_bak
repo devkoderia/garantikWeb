@@ -3,7 +3,7 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
 
-const FormPJ = () => {
+const FormPJ = (props: any) => {
 
     const [key, setKey] = useState<string | null>('dadosGerais');
 

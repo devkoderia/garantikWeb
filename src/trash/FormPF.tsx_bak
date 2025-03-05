@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
-const FormPF = () => {
+const FormPF = (props: any) => {
 
     
     const [key, setKey] = useState<string | null>('dadosGerais');
