@@ -26,18 +26,13 @@ const FormEscolhe = (props: any) => {
                 </form>
 
                 <div className="row" style={{ marginTop: 20, display: tipoJuridico ? 'block' : 'none'}}>
-					<div className="col-12 col-xl-12">
-                        <div className="card">
-							<div className="card-body p-4">
+					
 
 
                                 <FormCadastro tipoJuridico={tipoJuridico} tipo={props.tipo} />
                                 
                                                     
             
-                            </div>
-                        </div>
-                    </div>
 
                 </div>
 

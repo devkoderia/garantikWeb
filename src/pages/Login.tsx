@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast'
+import api from "../components/api";
 
 const LoginPage = () => {
 
@@ -40,9 +41,32 @@ const LoginPage = () => {
 
         }
 
-        console.log(dataPost)
+        
 
-        navigate('/Dashboard')
+        api.post('login', dataPost).then((result) => {
+
+            console.log(result.data[0])
+
+
+			if (result.data[0].usuario_id) {
+
+
+				var dadosUsuarios = JSON.stringify(result.data[0])
+
+				sessionStorage.setItem('dadosUsuarios', dadosUsuarios)
+
+				navigate('/Dashboard')
+
+			}
+
+
+        }).catch((err) => {
+
+            console.log(err.response)
+
+        })
+
+        //navigate('/Dashboard')
 
     }
 

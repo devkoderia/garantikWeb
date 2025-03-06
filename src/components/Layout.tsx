@@ -1,13 +1,55 @@
 import { useState, useEffect } from "react"
-import { Outlet, Link } from "react-router-dom"
+import { Outlet, Link, useNavigate } from "react-router-dom"
 import { Toaster } from 'react-hot-toast'
 import ModalSenha from "../modals/ModalSenha"
 import moment from 'moment'
 
 const Layout = () => {
 
+    const navigate = useNavigate()
+
     const [show, setShow] = useState(false)
 	const [now, setNow] = useState<string>('')
+
+    const dadosUsuarios = sessionStorage.getItem('dadosUsuarios')
+
+	const [nome, setNome] = useState<string | null>()
+	const [usuario_id, setUsuario_id] = useState<number | null>()	
+	const [email, setEmail] = useState<string | null>()
+	const [perfil, setPerfil] = useState<string | null>()
+
+	useEffect(() => {
+
+		if (dadosUsuarios) {
+
+			var dados = JSON.parse(dadosUsuarios)
+
+			setNome(dados.nome)
+			setUsuario_id(dados.usuario_id)
+			setEmail(dados.email)
+			setPerfil(dados.perfil)
+
+		}
+
+	}, [dadosUsuarios])
+
+
+	const logoff = () => {
+
+		sessionStorage.clear()
+        window.location.href = '/'
+        //navigate('/')
+		
+        /*
+		setUsuario_id(null)
+		setNome(null)
+		setEmail(null)
+		setPerfil(null)
+        */
+				
+        //
+
+	}
 
     return (
 
@@ -41,7 +83,7 @@ const Layout = () => {
                                 <div className="text-center">
                                 <img src="/assets/images/avatars/avatarDefault.png" className="rounded-circle p-1 shadow mb-3" width="90" height="90"
                                     alt="" />
-                                <h5 className="user-name mb-0 fw-bold">Olá, John</h5>
+                                <h5 className="user-name mb-0 fw-bold">Olá, {nome}</h5>
                                 </div>
                             </div>
                             <hr className="dropdown-divider" />
@@ -51,7 +93,7 @@ const Layout = () => {
                                 className="material-icons-outlined">key</i>Senha</Link>
                             
                             <hr className="dropdown-divider" />
-                            <Link className="dropdown-item d-flex align-items-center gap-2 py-2" to='/'><i
+                            <Link className="dropdown-item d-flex align-items-center gap-2 py-2" to='#' onClick={logoff}><i
                             className="material-icons-outlined">power_settings_new</i>Sair</Link>
                             </div>
                         </li>
@@ -104,68 +146,13 @@ const Layout = () => {
             </a>
             <ul className="dropdown-menu">
 
+                <li><a className="dropdown-item" href="/Produtor"><i className='material-icons-outlined'>layers</i>Produtor</a></li>
+                <li><a className="dropdown-item" href="/Corretor"><i className='material-icons-outlined'>folder</i>Corretor</a></li>
+                <li><a className="dropdown-item" href="/Afiancado"><i className='material-icons-outlined'>source</i>Afiançado</a></li>
+                <li><a className="dropdown-item" href="/Beneficiario"><i className='material-icons-outlined'>backup</i>Beneficiário</a></li>
+                <li><a className="dropdown-item" href="/Proposta"><i className='material-icons-outlined'>account_circle</i>Proposta</a></li>
+                <li><a className="dropdown-item" href="/Fianca"><i className='material-icons-outlined'>note_alt</i>Fiança</a></li>
                 
-                <li className="nav-item dropend">
-                <a className="dropdown-item dropdown-toggle dropdown-toggle-nocaret" href="javascript:;"><i className='material-icons-outlined'>layers</i>Produtor</a>
-                <ul className="dropdown-menu submenu">
-                    
-                    <li><a className="dropdown-item" href="/Produtor/Cadastro"><i className='material-icons-outlined'>dns</i>Cadastrar</a></li>
-                    <li><a className="dropdown-item" href="/Produtor/Lista"><i className='material-icons-outlined'>folder</i>Listar</a></li>
-                    
-                </ul>
-                </li>
-
-                <li className="nav-item dropend">
-                <a className="dropdown-item dropdown-toggle dropdown-toggle-nocaret" href="javascript:;"><i className='material-icons-outlined'>work_outline</i>Corretor</a>
-                <ul className="dropdown-menu submenu">
-                    
-                    <li><a className="dropdown-item" href="/Corretor/Cadastro"><i className='material-icons-outlined'>dns</i>Cadastrar</a></li>
-                    <li><a className="dropdown-item" href="/Corretor/Lista"><i className='material-icons-outlined'>folder</i>Listar</a></li>
-                    <li><a className="dropdown-item" href="/Corretor/ListaAutoCadastro"><i className='material-icons-outlined'>tips_and_updates</i>Lista auto cadastro</a></li>
-                    
-                </ul>
-                </li>
-
-                <li className="nav-item dropend">
-                <a className="dropdown-item dropdown-toggle dropdown-toggle-nocaret" href="javascript:;"><i className='material-icons-outlined'>source</i>Afiançado</a>
-                <ul className="dropdown-menu submenu">
-                    
-                    <li><a className="dropdown-item" href="/Afiancado/Cadastro"><i className='material-icons-outlined'>integration_instructions</i>Cadastrar</a></li>
-                    <li><a className="dropdown-item" href="/Afiancado/Lista"><i className='material-icons-outlined'>hourglass_empty</i>Listar</a></li>                    
-                    
-                </ul>
-                </li>
-
-                <li className="nav-item dropend">
-                <a className="dropdown-item dropdown-toggle dropdown-toggle-nocaret" href="javascript:;"><i className='material-icons-outlined'>backup</i>Beneficiário</a>
-                <ul className="dropdown-menu submenu">
-                    
-                    <li><a className="dropdown-item" href="/Beneficiario/Cadastro"><i className='material-icons-outlined'>integration_instructions</i>Cadastrar</a></li>
-                    <li><a className="dropdown-item" href="/Beneficiario/Lista"><i className='material-icons-outlined'>folder</i>Listar</a></li>                    
-                    
-                </ul>
-                </li>
-
-                <li className="nav-item dropend">
-                <a className="dropdown-item dropdown-toggle dropdown-toggle-nocaret" href="javascript:;"><i className='material-icons-outlined'>account_circle</i>Proposta</a>
-                <ul className="dropdown-menu submenu">
-                    
-                    <li><a className="dropdown-item" href="/Proposta/Cadastro"><i className='material-icons-outlined'>integration_instructions</i>Cadastrar</a></li>
-                    <li><a className="dropdown-item" href="/Proposta/Lista"><i className='material-icons-outlined'>folder</i>Listar</a></li>                    
-                    
-                </ul>
-                </li>
-
-                <li className="nav-item dropend">
-                <a className="dropdown-item dropdown-toggle dropdown-toggle-nocaret" href="javascript:;"><i className='material-icons-outlined'>note_alt</i>Fiança</a>
-                <ul className="dropdown-menu submenu">
-                    
-                    <li><a className="dropdown-item" href="/Fianca/Lista"><i className='material-icons-outlined'>source</i>Cadastrar</a></li>
-                    
-                    
-                </ul>
-                </li>
-
 
             </ul>
             </li>
@@ -206,15 +193,15 @@ const Layout = () => {
             </li>
             <li className="nav-item dropdown">
             <a className="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
-                <div className="parent-icon"><i className='material-icons-outlined'>medical_services</i>
+                <div className="parent-icon"><i className='material-icons-outlined'>engineering</i>
                 </div>
-                <div className="menu-title d-flex align-items-center">Usuários</div>
+                <div className="menu-title d-flex align-items-center">Administração</div>
                 <div className="ms-auto dropy-icon"><i className='material-icons-outlined'>expand_more</i></div>
             </a>
             <ul className="dropdown-menu">
+
+                <li><a className="dropdown-item" href="/Usuarios"><i className='material-icons-outlined'>group</i>Usuários</a></li>
                 
-                <li><a className="dropdown-item" href="/Usuarios/Cadastro"><i className='material-icons-outlined'>dns</i>Cadastrar</a></li>
-                <li><a className="dropdown-item" href="/Usuarios/Lista"><i className='material-icons-outlined'>folder</i>Listar</a></li>
             </ul>
             </li>
             
