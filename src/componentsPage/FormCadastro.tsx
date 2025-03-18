@@ -47,12 +47,8 @@ const FormCadastro = (props: any) => {
                                         
 
 
-                                        <form className="row g-3">
-                                            <div className="col-md-12">
-
-                                    
-
-                                            </div>
+                                        <div className="row g-3">
+                                            
                                             <div className="col-md-2">
                                                 <label className="form-label">CNPJ</label>
                                                 <input type="text" className="form-control" style={{ backgroundColor: '#e9f2f1'}} />
@@ -138,7 +134,7 @@ const FormCadastro = (props: any) => {
                                         
 
                                             
-                                        </form>
+                                        </div>
 
 
 

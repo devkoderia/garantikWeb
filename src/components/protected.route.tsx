@@ -1,25 +1,17 @@
-
-import { Navigate } from "react-router-dom";
-
+import { Navigate, Outlet } from "react-router-dom";
 
 interface IProps {
-
-    children: any,
-
+    children?: React.ReactNode; 
 }
 
 const ProtectedRoute: React.FC<IProps> = ({ children }) => {
+    const isAuthenticated = sessionStorage.getItem("dadosUsuarios");
 
-  if (sessionStorage.getItem('dadosUsuarios')) {
- 
-    return children
-    
-  } else {
+    if (!isAuthenticated) {
+        return <Navigate to="/" />;
+    }
 
-    return <Navigate to="/" />;
-
-  }
-  
+    return children ? <>{children}</> : <Outlet />;
 };
 
-export default ProtectedRoute
+export default ProtectedRoute;

@@ -2,23 +2,25 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom"
 import toast, { Toaster } from 'react-hot-toast'
 import api from "../components/api";
+import { validaCPF } from "../components/generalFunctions"
+import TextInput from "../components/TextInput";
 
 const LoginPage = () => {
 
 
     const navigate = useNavigate()
 
-    const [email, setEmail] = useState<string>('')
+    const [cpf, setCpf] = useState<string>('')
     const [senha, setSenha] = useState<string>('')
 
 
 
     const login = () => {
 
-        if (email == '') {
+        if (!validaCPF(cpf.replaceAll('.', '').replaceAll('-', ''))) {
 
 
-            toast.error('Por favor, informe o e-mail!')
+            toast.error('CPF inválido!')
             
             return false
 
@@ -36,7 +38,7 @@ const LoginPage = () => {
 
         var dataPost = {
 
-            email: email,
+            cpf: cpf.replaceAll('.', '').replaceAll('-', ''),
             senha: senha,
 
         }
@@ -45,8 +47,8 @@ const LoginPage = () => {
 
         api.post('login', dataPost).then((result) => {
 
-            console.log(result.data[0])
-
+            //console.log(result.data[0])
+            //return false
 
 			if (result.data[0].usuario_id) {
 
@@ -87,14 +89,18 @@ const LoginPage = () => {
                                 <div className="form-body my-5">
                                     <form className="row g-3">
                                         <div className="col-12">
-                                            <label className="form-label">Email</label>
-                                            <input type="email" className="form-control" value={email} onChange={event => setEmail(event.target.value)} placeholder="seu@email.com" 
-                                            onKeyPress={(e) => {
-                                                if (e.key === "Enter") {
-                                                    login()                                            
-                                                }
-                                            }}
-                                            />
+                                            <label className="form-label">CPF</label>
+                                            
+                                            <TextInput placeholder="000.000.0000-00" maskType="cpf" value={cpf} className="form-control"
+											onChange={event => setCpf(event.target.value)} 
+											onKeyPress={(e) => {
+												if (e.key === "Enter") {
+													login()                                            
+												}
+											}}
+											/>
+
+									
                                         </div>
                                         <div className="col-12">
                                             <label className="form-label">Senha</label>

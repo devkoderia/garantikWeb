@@ -9,9 +9,10 @@ import Usuarios from './pages/Usuarios'
 
 
 import PropostaCadastro from './pages/PropostaCadastro'
-//import UsuarioCadastro from './pages/UsuarioCadastro'
-
 import FormIntro from './pages/FormIntro'
+
+import CadastroConvite from './pages/CadastroConvite'
+
 
 
 const Rotas = () => {
@@ -23,24 +24,23 @@ const Rotas = () => {
             <Routes>
 
                 <Route path='/' element={<Login />} />  
+                <Route path='/03!ZXqW771/:cliente_id/:chaveLink' element={<CadastroConvite />} />
 
                 <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+                        
+                        <Route path='/Dashboard' element={<Dashboard />} />
+                        
+                        <Route path='/Produtor' element={<FormIntro tipo='Produtor' />} />
+                        <Route path='/Corretor' element={<FormIntro tipo='Corretor' />} />
+                        <Route path='/Afiancado' element={<FormIntro tipo='Afiançado' />} />
+                        <Route path='/Beneficiario' element={<FormIntro tipo='Beneficiário' />} />
+                        
+                        <Route path='/Proposta' element={<PropostaCadastro />} />
 
-                    
-                    <Route path='/Dashboard' element={<Dashboard />} />
-                    
-                    <Route path='/Produtor' element={<FormIntro tipo='Produtor' />} />
-                    <Route path='/Corretor' element={<FormIntro tipo='Corretor' />} />
-                    <Route path='/Afiancado' element={<FormIntro tipo='Afiançado' />} />
-                    <Route path='/Beneficiario' element={<FormIntro tipo='Beneficiário' />} />
-                    
-                    <Route path='/Proposta' element={<PropostaCadastro />} />
-
-                    <Route path='/Usuarios' element={<Usuarios />} />
-                    
-
-
+                        <Route path='/Usuarios' element={<Usuarios />} />
+                        
                 </Route>
+
 
 
             </Routes>
