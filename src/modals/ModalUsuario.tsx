@@ -79,16 +79,8 @@ const ModalUsuario = (props: any) => {
 
     const carregaPerfis = () => {
 
-        if (cliente_id) {
-
-
-            var dataPost = {
-
-                cliente_id: cliente_id,
     
-            }
-    
-            api.post('perfilListaTodos', dataPost).then((result) => {
+            api.get('perfilListaTodos').then((result) => {
     
                 //console.log(result.data)
                 setPerfis(result.data.map((rs: iPerfis) =>
@@ -103,7 +95,7 @@ const ModalUsuario = (props: any) => {
     
             })
     
-        }
+        
 
 
     }
@@ -113,7 +105,7 @@ const ModalUsuario = (props: any) => {
 
         carregaPerfis()
 
-    }, [cliente_id])
+    },)
 
 
     useEffect(() => {
@@ -136,14 +128,16 @@ const ModalUsuario = (props: any) => {
 
             }
 
+            
+
             api.post(`usuario/${usuario_id}`, dataPost).then((result) => {
 
-                console.log(result.data)
+                //console.log(result.data)
                 var data = result.data[0]
                 
                 setCpf(data.cpf ? formataCPF(data.cpf) : '')
                 setNome(data.nome)
-                setEmail(data.email)
+                setEmail(data.email ? data.email : '')
                 setPerfil_id(data.perfil_id)
                 setStatus(data.status)
 
@@ -232,7 +226,7 @@ const ModalUsuario = (props: any) => {
 
                         <div className="col-md-6">
                             <label className="form-label">Perfil *</label>
-                            <select className="form-control" >
+                            <select className="form-control" value={perfil_id} onChange={event => setPerfil_id(event.target.value ? Number(event.target.value) : undefined)} >
                                 <option value="">[Selecione]</option>
                                 {perfis}
                             </select>

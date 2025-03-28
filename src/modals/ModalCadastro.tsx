@@ -27,13 +27,17 @@ const ModalCadastro = (props: any) => {
 
             <Modal
                 
+                //show={show}
+                //fullscreen={true}
+                //onHide={() => setShow(false)}
+                //style={{ height: "auto" }}
+                size="xl"
                 show={show}
-                fullscreen={true}
                 onHide={() => setShow(false)}
-                style={{ height: "auto" }}
+                aria-labelledby="example-modal-sizes-title-xl"
                 >
                 <Modal.Header closeButton>
-                <Modal.Title>
+                <Modal.Title id="example-modal-sizes-title-xl">
 
                     
                         {props.tipo}

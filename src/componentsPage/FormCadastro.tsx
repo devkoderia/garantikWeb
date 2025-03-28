@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-
+import toast from 'react-hot-toast'
+import { validaCPF, validaCNPJ } from '../components/generalFunctions'
+import TextInput from '../components/TextInput'
+import api from '../components/api';
 
 const FormCadastro = (props: any) => {
 
@@ -10,7 +13,48 @@ const FormCadastro = (props: any) => {
     const tipoJuridico = props.tipoJuridico
     const tipo = props.tipo
 
+    const [cpf, setCPF] = useState<string>('')
+    const [nome, setNome] = useState<string>('')
+    const [clienteUsuario_id, setClienteUsuario_id] = useState<number | undefined>()
 
+    const consultaClienteUsuarioCpf = async () => {
+
+        var dataPost = {
+
+            cliente_id: props.cliente_id,
+
+        }
+
+        const resultado = await api.post(`consultaClienteUsuarioCpf/${cpf.replaceAll('.', '').replaceAll('-', '')}`, dataPost)
+        return resultado.data
+
+    }
+
+
+    const verificaCPF = async () => {
+
+        if (!validaCPF(cpf.replaceAll('.', '').replaceAll('-', ''))) {
+
+            toast.error('CPF inválido!')
+            return false
+
+        } else {
+
+            var resultado = await consultaClienteUsuarioCpf()
+            
+            if (resultado.length > 0) {
+
+                var data = resultado[0]
+
+                setNome(data.nome)
+                setClienteUsuario_id(data.clienteUsuario_id)
+
+            }
+
+        }
+
+
+    }
     
 
 
@@ -164,36 +208,50 @@ const FormCadastro = (props: any) => {
                                         
                                         <div className="col-md-2" style={{ display: tipoJuridico == 'F' ? 'table-row' : 'none'}}>
                                             <label className="form-label">CPF</label>
-                                            <input type="text" className="form-control" style={{ backgroundColor: '#e9f2f1'}} />
+                                            <TextInput placeholder="000.000.0000-00" maskType="cpf" type="text" className="form-control" style={{ backgroundColor: '#e9f2f1'}} value={cpf} onBlur={verificaCPF} onChange={event => setCPF(event.target.value)} />
                                         </div>
                                         <div className="col-md-2" style={{ display: tipoJuridico == 'O' ? 'table-row' : 'none'}}>
                                             <label className="form-label">Documento</label>
                                             <input type="text" className="form-control" style={{ backgroundColor: '#e9f2f1'}} />
                                         </div>
-                                        <div className="col-md-10">
-                                            <label  className="form-label">Nome</label>
-                                            <input type="text" className="form-control" />
-                                        </div>
-                                        <div className="col-md-3">
-                                            <label  className="form-label">Nacionalidade</label>
-                                            <input type="text" className="form-control" />
-                                        </div>
-                                        <div className="col-md-3">
-                                            <label  className="form-label">Estado Civil</label>
-                                            <select className="form-control" >
-                                                <option value="">[Selecione]</option>
-                                                <option value="Casado">Casado</option>
-                                                <option value="Solteiro">Solteiro</option>
-                                            </select>
-                                        </div>
-                                        <div className="col-md-3">
-                                            <label  className="form-label">Profissão</label>
-                                            <input type="text" className="form-control" />
-                                        </div>
-                                        <div className="col-md-3">
-                                            <label  className="form-label">SUSEP</label>
-                                            <input type="text" className="form-control" />
-                                        </div>
+
+                                        {
+                                            clienteUsuario_id &&
+                                            (
+
+                                                <>
+                                                
+                                                    <div className="col-md-10">
+                                                        <label  className="form-label">Nome</label>
+                                                        <input type="text" className="form-control" value={nome} onChange={event => setNome(event.target.value)} disabled />
+                                                    </div>
+                                                    <div className="col-md-3">
+                                                        <label  className="form-label">Nacionalidade</label>
+                                                        <input type="text" className="form-control" />
+                                                    </div>
+                                                    <div className="col-md-3">
+                                                        <label  className="form-label">Estado Civil</label>
+                                                        <select className="form-control" >
+                                                            <option value="">[Selecione]</option>
+                                                            <option value="Casado">Casado</option>
+                                                            <option value="Solteiro">Solteiro</option>
+                                                        </select>
+                                                    </div>
+                                                    <div className="col-md-3">
+                                                        <label  className="form-label">Profissão</label>
+                                                        <input type="text" className="form-control" />
+                                                    </div>
+                                                    <div className="col-md-3">
+                                                        <label  className="form-label">SUSEP</label>
+                                                        <input type="text" className="form-control" />
+                                                    </div>
+                                                
+                                                </>
+
+                                            )
+                                        }
+
+                                        
         
                                     </form>
         

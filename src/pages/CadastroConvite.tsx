@@ -52,6 +52,8 @@ const CadastroConvite = () => {
     const [senha, setSenha] = useState<string>('')
     const [confirmaSenha, setConfirmaSenha] = useState<string>('')
 
+    const [cadastrado, setCadastrado] = useState<boolean>(false)
+
     const ano = moment().format('YYYY')
 
 
@@ -90,41 +92,7 @@ const CadastroConvite = () => {
                 toast.error('A senha precisa ter no mínimo 5 caracteres!')
                 return false
 
-            } else {
-
-                const regex = /[0-9]/;
-                if (!regex.test(senha)) {
-
-                    toast.error('Sua senha precisa ter ao menos um caractere numérico!')
-                    return false
-
-                } else {
-
-                    const regex = /[A-Z]/;
-                    if (!regex.test(senha)) {
-
-                        toast.error('Sua senha precisa ter ao menos uma letra maiúscula!')
-                        return false
-
-                    } else {
-
-                        
-                        let regex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{4,}$/)
-
-                        if (!regex.test(senha)) {
-
-                            toast.error('Sua senha precisa ter ao menos um caractere especial e uma letra miníscula!')
-                            return false
-    
-                        }
-
-                    }
-                    
-                }
-                
-
-
-            }
+            } 
 
         }
 
@@ -141,6 +109,7 @@ const CadastroConvite = () => {
         var dataPost = {
 
             nome: nome,
+            cliente_id: cliente_id,
             email: email,
             cpf: cpf.replaceAll('.', '').replaceAll('-', ''),
             senha: senha,
@@ -148,9 +117,25 @@ const CadastroConvite = () => {
 
         }
 
-        console.log(dataPost)
+        //console.log(dataPost)
 
-        return false
+        //return false
+
+        api.post('autoCadastro', dataPost).then((result) => {
+
+            //console.log(result.data)
+
+            if (result.data.status == 'ok') {
+
+                setCadastrado(true)
+
+            }
+
+        }).catch((err) => {
+
+            console.log(err.response)
+
+        })
 
     }
 
@@ -216,13 +201,14 @@ const CadastroConvite = () => {
                                         <h2 className="coming-soon-title text-dark fw-bold mb-3">Convite</h2>
                                         <h6 className="text-black text-uppercase">{nomeFantasia}</h6>
                                         <br/>
-                                        <p className="text-primary">Por favor, informe os dados abaixo para fazer parte da equipe.</p>
+                                        <p className="text-primary"  style={{ display: cadastrado == true ? 'none' : 'block'}}>Por favor, informe os dados abaixo para fazer parte da equipe.</p>
+                                        <p className="text-primary"  style={{ display: cadastrado == true ? 'block' : 'none'}}>Cadastro realizado com sucesso! Por favor, aguarde e-mail de confirmação para a acesso ao sistema.</p>
                                     </div>
                                         <div className="text-left error-pages">
 
                                             <div className="row">
                                                 <div className="col-xl-8 mx-auto">
-                                                    <div className="card">
+                                                    <div className="card" style={{ display: cadastrado == true ? 'none' : 'table-row'}}>
                                                         <div className="card-header px-4 py-3">
                                                             <h5 className="mb-0">Cadastre-se</h5>
                                                         </div>
