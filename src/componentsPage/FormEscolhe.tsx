@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import FormCadastro from "../componentsPage/FormCadastro"
+import FormCorretor from "../componentsPage/FormCorretor"
 
 const FormEscolhe = (props: any) => {
 
@@ -79,9 +79,14 @@ const FormEscolhe = (props: any) => {
 
                 <div className="row" style={{ marginTop: 20, display: tipoJuridico ? 'block' : 'none'}}>
 					
+                        {
+                            props.tipo == 'Corretor' && (
 
+                                <FormCorretor tipoJuridico={tipoJuridico} cliente_id={cliente_id} />
+                            )
+                        }
 
-                                <FormCadastro tipoJuridico={tipoJuridico} tipo={props.tipo} cliente_id={cliente_id} />
+                                
                                 
                                                     
             
