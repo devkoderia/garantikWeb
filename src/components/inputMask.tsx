@@ -42,6 +42,18 @@ export const maskPhone = (event: React.FormEvent<HTMLInputElement>) => {
     .replace(/(\d{5})(\d{4})/, '$1-$2');
 };
 
+export const maskPhoneFixo = (event: React.FormEvent<HTMLInputElement>) => {
+  // O comprimento máximo para (00) 0000-0000 é 14 caracteres:
+  // ( -> 1, 2 dígitos -> 2, ) -> 1, espaço -> 1, 4 dígitos -> 4, hífen -> 1, 4 dígitos -> 4, total = 14
+  event.currentTarget.maxLength = 14;
+  const { value } = event.currentTarget;
+  // Remove tudo que não for dígito e aplica a máscara
+  return value
+    .replace(/\D/g, '')
+    .replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+};
+
+
 export const maskCEP = (event: React.FormEvent<HTMLInputElement>) => {
   event.currentTarget.maxLength = 9;
   const { value } = event.currentTarget;
@@ -59,7 +71,7 @@ export const maskDate = (event: React.FormEvent<HTMLInputElement>) => {
 };
 
 
-export type MaskTypes = 'cpf' | 'money' | 'phone' | 'cep' | 'cnpj' | 'date';
+export type MaskTypes = 'cpf' | 'money' | 'phone' | 'phoneFixo' | 'cep' | 'cnpj' | 'date';
 
 type Masks = Record<
   MaskTypes,
@@ -70,6 +82,7 @@ const masks: Masks = {
   cpf: maskCPF,
   money: maskMoney,
   phone: maskPhone,
+  phoneFixo: maskPhoneFixo,
   cep: maskCEP,
   cnpj: maskCNPJ,
   date: maskDate,

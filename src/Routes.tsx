@@ -12,7 +12,7 @@ import PropostaCadastro from './pages/PropostaCadastro'
 import FormIntro from './pages/FormIntro'
 
 import CadastroConvite from './pages/CadastroConvite'
-
+import Corretor from './pages/Corretor'
 
 
 const Rotas = () => {
@@ -31,7 +31,7 @@ const Rotas = () => {
                         <Route path='/Dashboard' element={<Dashboard />} />
                         
                         <Route path='/Produtor' element={<FormIntro tipo='Produtor' />} />
-                        <Route path='/Corretor' element={<FormIntro tipo='Corretor' />} />
+                        <Route path='/Corretor' element={<Corretor/>} />
                         <Route path='/Afiancado' element={<FormIntro tipo='Afiançado' />} />
                         <Route path='/Beneficiario' element={<FormIntro tipo='Beneficiário' />} />
                         

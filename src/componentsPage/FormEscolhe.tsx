@@ -82,14 +82,10 @@ const FormEscolhe = (props: any) => {
                         {
                             props.tipo == 'Corretor' && (
 
-                                <FormCorretor tipoJuridico={tipoJuridico} cliente_id={cliente_id} />
+                                <FormCorretor tipoJuridico={tipoJuridico} cliente_id={cliente_id} setShow={props.setShow} />
                             )
                         }
 
-                                
-                                
-                                                    
-            
 
                 </div>
 

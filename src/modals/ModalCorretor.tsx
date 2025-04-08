@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import FormEscolhe from '../componentsPage/FormEscolhe';
+import FormCorretor from '../componentsPage/FormCorretor';
 
 const ModalCadastro = (props: any) => {
 
@@ -9,14 +9,17 @@ const ModalCadastro = (props: any) => {
 
     const [show, setShow] = useState(props.show)
 
+
+
     useEffect(() => {
 
         
         setShow(props.show);
-        //console.log(props)
-        //setUsuario_id(props.usuario_id)
-                
+        
     }, [props.show, props.usuario_id, props.now]);
+
+
+
 
 
 
@@ -40,7 +43,7 @@ const ModalCadastro = (props: any) => {
                 <Modal.Title id="example-modal-sizes-title-xl">
 
                     
-                        {props.tipo}
+                        Corretor
 
 
 
@@ -48,13 +51,14 @@ const ModalCadastro = (props: any) => {
                 </Modal.Header>
                 <Modal.Body>
 
-                    <FormEscolhe tipo={props.tipo} setShow={setShow} />
+                            
+
+                    <FormCorretor cliente_id={props.cliente_id} corretor_id={props.corretor_id} setShow={props.setShow} now={props.now} carregaCorretores={props.carregaCorretores} />
+                            
+
 
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => props.setShow(false)}>Fechar</Button>
-                    
-                </Modal.Footer>
+               
 
             </Modal>
 
