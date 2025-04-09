@@ -9,7 +9,6 @@ import axios from 'axios'
 import moment from 'moment'
 import { useForm, Controller } from "react-hook-form";
 import CurrencyInput from '../components/CurrencyInput';
-
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -18,6 +17,7 @@ import Button from "@mui/material/Button";
 import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
 
+
 const Transition = forwardRef(function Transition(
     props: TransitionProps & { children: ReactElement<any, any> },
     ref
@@ -25,51 +25,48 @@ const Transition = forwardRef(function Transition(
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-    interface IUF {
-        uf_codigo: string;
-        uf_descri: string;
-    }
 
-    interface IMunicipio {
-        ibge_codigo: string;
-        ibge_descri: string;
-    }
+interface IUF {
+    uf_codigo: string;
+    uf_descri: string;
+}
 
-    interface IProdutor {
-        produtor_id: number;
-        nomeConcatenado: string;
-    }
+interface IMunicipio {
+    ibge_codigo: string;
+    ibge_descri: string;
+}
 
-    interface IBanco {
-        banco_id: number;
-        descricao: string;
-    }
-
-    interface INacionalidade {
-        nacionalidade_id: number;
-        descricao: string;
-    }
+interface IBanco {
+    banco_id: number;
+    descricao: string;
+}
 
 
-    interface iClientes {
+interface iClientes {
 
-        cliente_id: number,
-        nomeFantasia: string,
-        cnpj: string,
-
-
-    }
+    cliente_id: number,
+    nomeFantasia: string,
+    cnpj: string,
 
 
+}
 
-const FormCorretor = (props: any) => {
+
+interface INacionalidade {
+    nacionalidade_id: number;
+    descricao: string;
+}
+
+
+const FormProdutor = (props: any) => {
 
 
     const { control, handleSubmit } = useForm({
         defaultValues: {
-          premioMinimo: "",
+            premioMinimo: "",
         },
-      });
+    });
+
 
 
     const [usuario_id_session, setUsuario_id_session] = useState<number | undefined>()
@@ -79,26 +76,24 @@ const FormCorretor = (props: any) => {
 
     useEffect(() => {
 
-		if (dadosUsuarios) {
+        if (dadosUsuarios) {
 
-			var dados = JSON.parse(dadosUsuarios)
-            
+            var dados = JSON.parse(dadosUsuarios)
+
             carregaClientes()
             setUsuario_id_session(dados.usuario_id)
 
-		    //setCliente_id(dados.cliente_id ? Number(dados.cliente_id) : undefined)
-	
+            //setCliente_id(dados.cliente_id ? Number(dados.cliente_id) : undefined)
 
-		}
 
-	}, [dadosUsuarios])
+        }
+
+    }, [dadosUsuarios])
 
 
 
 
     const [key, setKey] = useState<string | null>('dadosGerais');
-
-
     const [open, setOpen] = useState<boolean>(false);
     //const [show, setShow] = useState(props.showDevolucao)
 
@@ -106,15 +101,14 @@ const FormCorretor = (props: any) => {
 
     const [titulo, setTitulo] = useState<string | undefined>('')
     const [frase, setFrase] = useState<string | undefined>('')
-
-
-
     const [cpf, setCPF] = useState<string>('')
     const [nome, setNome] = useState<string>('')
+
+    const [clientes, setClientes] = useState<[]>([])
     const [clienteUsuario_id, setClienteUsuario_id] = useState<number | undefined>()
-
-
     const [cliente_id, setCliente_id] = useState<number>()
+    const [validadoCNPJ, setValidadoCNPJ] = useState<boolean>(false)
+    const [validadoCPF, setValidadoCPF] = useState<boolean>(false)
 
     const [cnpj, setCnpj] = useState<string>('')
     const [nomeFantasia, setNomeFantasia] = useState<string>('')
@@ -158,24 +152,20 @@ const FormCorretor = (props: any) => {
     const [numeroConta, setNumeroConta] = useState<string>('')
     const [tipoConta, setTipoConta] = useState<string>('')
     const [chavePix, setChavePix] = useState<string>('')
+
     const [nomeCorrentista, setNomeCorrentista] = useState<string>('')
     const [cpfCorrentista, setCpfCorrentista] = useState<string>('')
     const [cnpjCorrentista, setCnpjCorrentista] = useState<string>('')
+
     const [ufs, setUfs] = useState<React.ReactNode[]>([])
     const [uf, setUf] = useState<string>('')
-    const [produtores, setProdutores] = useState<React.ReactNode[]>([])
-    const [produtor_id, setProdutor_id] = useState<number>()
+
     const [bancos, setBancos] = useState<React.ReactNode[]>([])
-    const [banco_id, setBanco_id] = useState<number>()    
+    const [banco_id, setBanco_id] = useState<number>()
     const [nacionalidades, setNacionalidades] = useState<React.ReactNode[]>([])
     const [nacionalidade_id, setNacionalidade_id] = useState<number | undefined>(7)
     const [tipoJuridico, setTipoJuridico] = useState<string>('')
-    const [bloqueado, setBloqueado] = useState<number | undefined>()
 
-    const [validadoCNPJ, setValidadoCNPJ] = useState<boolean>(false)
-
-
-    const [clientes, setClientes] = useState<[]>([])
 
 
     const carregaClientes = () => {
@@ -183,69 +173,19 @@ const FormCorretor = (props: any) => {
 
         setClientes([])
 
-		if (dadosUsuarios) {
+        if (dadosUsuarios) {
 
-			var dados = JSON.parse(dadosUsuarios)
-            
+            var dados = JSON.parse(dadosUsuarios)
+
             setClientes(dados.clientes)
 
-		    //setCliente_id(dados.cliente_id ? Number(dados.cliente_id) : undefined)
-	
+            //setCliente_id(dados.cliente_id ? Number(dados.cliente_id) : undefined)
 
-		}
+
+        }
 
     }
 
-
-
-
-    const listaNacionalidade = async () => {
-        try {
-            const resultado = await api.get<INacionalidade[]>('nacionalidades');
-            setNacionalidades(resultado.data.map((rs: INacionalidade) =>
-            
-                <option key={rs.nacionalidade_id} value={rs.nacionalidade_id}>
-                    {rs.descricao}
-                </option>
-            
-            ));
-
-
-        } catch (error) {
-            console.error('Erro ao buscar Nacionalidades:', error);
-        }
-    };
-
-
-    const listaProdutor = async () => {
-
-        if (cliente_id) {
-
-
-            var dataPost = {
-                cliente_id: cliente_id,
-            }
-
-            try {
-                const resultado = await api.post<IProdutor[]>(`produtorListaSelect`, dataPost);
-
-                setProdutores(resultado.data.map((rs) =>
-                
-                    
-                        <option key={rs.produtor_id} value={rs.produtor_id}>
-                            {rs.nomeConcatenado}
-                        </option>
-                    
-                
-                ));
-
-            } catch (error) {
-                console.error('Erro ao buscar Produtores:', error);
-            }
-            
-        }
-
-    };
 
 
     const listaMunicipios = async () => {
@@ -255,12 +195,12 @@ const FormCorretor = (props: any) => {
             try {
                 const resultado = await api.get<IMunicipio[]>(`listaMunicipios/${uf}`);
                 setMunicipios(resultado.data.map((rs) =>
-                
+
                     <option key={rs.ibge_codigo} value={rs.ibge_codigo}>
                         {rs.ibge_descri}
                     </option>
-                
-                
+
+
                 ));
             } catch (error) {
                 console.error('Erro ao buscar UFs:', error);
@@ -268,7 +208,7 @@ const FormCorretor = (props: any) => {
 
         }
 
-        
+
     };
 
 
@@ -276,12 +216,12 @@ const FormCorretor = (props: any) => {
         try {
             const resultado = await api.get<IUF[]>('listaUf');
             setUfs(resultado.data.map((rs) =>
-                
-                    <option key={rs.uf_codigo} value={rs.uf_codigo}>
-                        {rs.uf_descri}
-                    </option>
-                
-            
+
+                <option key={rs.uf_codigo} value={rs.uf_codigo}>
+                    {rs.uf_descri}
+                </option>
+
+
             ));
         } catch (error) {
             console.error('Erro ao buscar UFs:', error);
@@ -292,35 +232,18 @@ const FormCorretor = (props: any) => {
         try {
             const resultado = await api.get<IBanco[]>('bancoListaTodos');
             setBancos(resultado.data.map((rs) =>
-            
+
                 <option key={rs.banco_id} value={rs.banco_id}>
                     {rs.descricao}
                 </option>
-            
-            
+
+
             ));
         } catch (error) {
             console.error('Erro ao buscar UFs:', error);
         }
     };
 
-
-
-
-    const consultaClienteUsuarioCpf = async () => {
-
-        if (cliente_id) {
-
-            var dataPost = {
-                cliente_id: cliente_id,
-            }
-    
-            const resultado = await api.post(`consultaClienteUsuarioCpf/${cpf.replaceAll('.', '').replaceAll('-', '')}`, dataPost)
-            return resultado.data
-    
-        }
-
-    }
 
 
     const verificaCPF = async () => {
@@ -337,7 +260,7 @@ const FormCorretor = (props: any) => {
             if (resultado.length > 0) {
 
                 var data = resultado[0]
-
+                setValidadoCPF(true)
                 setNome(data.nome)
                 setClienteUsuario_id(data.clienteUsuario_id)
 
@@ -347,6 +270,22 @@ const FormCorretor = (props: any) => {
 
     }
 
+
+
+    const consultaClienteUsuarioCpf = async () => {
+
+        if (cliente_id) {
+
+            var dataPost = {
+                cliente_id: cliente_id,
+            }
+
+            const resultado = await api.post(`consultaClienteUsuarioCpf/${cpf.replaceAll('.', '').replaceAll('-', '')}`, dataPost)
+            return resultado.data
+
+        }
+
+    }
 
 
 
@@ -378,8 +317,138 @@ const FormCorretor = (props: any) => {
     }
 
 
-    const carregaCorretor = () => {
 
+    const consultaCNPJ = async () => {
+
+        try {
+
+            var resultado = await api.get(`consultaCNPJ/${cnpj.replaceAll('.', '').replaceAll('-', '').replaceAll('/', '')}`)
+            return resultado.data
+
+        } catch (err) {
+
+            return err
+
+        }
+
+
+
+    }
+
+
+
+    const verificaCNPJ = async () => {
+
+
+        if (!validaCNPJ(cnpj.replaceAll('.', '').replaceAll('-', '').replaceAll('/', ''))) {
+
+            toast.error('CNPJ inválido!')
+            return false
+
+        } else {
+
+            var data = await consultaCNPJ()
+
+            if (data) {
+
+                setValidadoCNPJ(true)
+                setRazaoSocial(data.nome)
+                setNomeFantasia(data.fantasia)
+                setNaturezaJuridica(data.natureza_juridica)
+                setTipoEmpresa(data.tipo)
+                setPorte(data.porte)
+                setCapitalSocial(
+                    data.capital_social
+                        ? Number(data.capital_social).toLocaleString('pt-BR', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        })
+                        : ''
+                )
+
+                setCnae(data.atividade_principal[0].code)
+                setCnaeDescricao(data.atividade_principal[0].text)
+                setSituacao(data.situacao)
+                setDataSituacao(data.data_situacao)
+                setMotivoSituacao(data.motivo_situacao)
+                setSituacaoEspecial(data.situacao_especial)
+                setDataSituacaoEspecial(data.data_situacao_especial)
+                setDataAbertura(data.abertura)
+                setDataUltimaAtualizacao(data.ultima_atualizacao ? moment(data.ultima_atualizacao).utc().format('DD/MM/YYYY HH:mm:ss') : undefined)
+
+                setLogradouro(data.logradouro)
+                setNumero(data.numero)
+                setBairro(data.bairro)
+                setComplemento(data.complemento)
+                setUf(data.uf)
+                setCep(data.cep ? data.cep.replaceAll('.', '') : '')
+
+                verificaCEP(data.cep ? data.cep.replaceAll('.', '') : '')
+
+            }
+
+
+        }
+
+
+    }
+
+
+
+
+    const listaNacionalidade = async () => {
+        try {
+            const resultado = await api.get<INacionalidade[]>('nacionalidades');
+            setNacionalidades(resultado.data.map((rs: INacionalidade) =>
+
+                <option key={rs.nacionalidade_id} value={rs.nacionalidade_id}>
+                    {rs.descricao}
+                </option>
+
+            ));
+
+
+        } catch (error) {
+            console.error('Erro ao buscar Nacionalidades:', error);
+        }
+    };
+
+
+
+
+    useEffect(() => {
+
+        listaUf()
+        listaBanco()
+        listaNacionalidade()
+
+    }, [])
+
+
+
+    useEffect(() => {
+
+        listaMunicipios()
+
+    }, [uf])
+
+
+
+    useEffect(() => {
+
+        limpa()
+
+
+        if (props.produtor_id && props.cliente_id) {
+
+            carregaProdutor()
+
+        }
+
+    }, [props.produtor_id, props.cliente_id])
+
+
+    const carregaProdutor = () => {
 
         var dataPost = {
 
@@ -387,14 +456,14 @@ const FormCorretor = (props: any) => {
 
         }
 
-        api.post(`corretorListaUm/${props.corretor_id}`, dataPost).then((result) => {
 
-            //console.log(result.data)
+        api.post(`produtorListaUm/${props.produtor_id}`, dataPost).then((result) => {
 
             var data = result.data[0]
 
             setCPF(data.cpf)
             setNome(data.nome)
+            setValidadoCPF(true)
             
             //setClienteUsuario_id(data.clienteUsuario_id)
             setCliente_id(data.cliente_id)
@@ -442,19 +511,16 @@ const FormCorretor = (props: any) => {
             setNomeCorrentista(data.nomeCorrentista)
             setCpfCorrentista(data.cpfCorrentista)
             setCnpjCorrentista(data.cnpjCorrentista)
-            
+            setUfs(data.ufs)
             setUf(data.uf)
             
-            setProdutor_id(data.produtor_id)
             setBancos(data.bancos)
             setBanco_id(data.banco_id)
             
             setNacionalidade_id(data.nacionalidade_id)
             setTipoJuridico(data.tipoJuridico)
             setDataUltimaAtualizacao(data.dataUltimaAtualizacao)
-            setBloqueado(data.bloqueado ? data.bloqueado == true ? 1 : 0 : undefined)
             
-
 
         }).catch((err) => {
 
@@ -462,27 +528,77 @@ const FormCorretor = (props: any) => {
 
         })
 
+
     }
 
-    useEffect(() => {
 
-        limpa()
-        
-        
-        if (props.corretor_id && props.cliente_id) {
-
-            carregaCorretor()
-
-        }
-
-    }, [props.corretor_id, props.cliente_id])
+    const limpa = () => {
 
 
 
-    const validaSalvar = async () => {
+        setClienteUsuario_id(undefined)
+        setCPF('')
+        setNome('')
+        setCnpj('')
+        setNomeFantasia('')
+        setRazaoSocial('')
+        setCep('')
+        setIbge_codigo('')
+        setIbge_descri('')
 
-        
-        
+        setLogradouro('')
+        setNumero('')
+        setComplemento('')
+        setBairro('')
+        setTelefoneFixo('')
+        setTelefoneCelular('')
+        setEmail('')
+        setPessoaContato('')
+        setEmailPessoaContato('')
+        setTelefoneFixoPessoaContato('')
+        setTelefoneCelularPessoaContato('')
+        setObservacao('')
+        setComissaoPorcentagem(undefined)
+        setPremioMinimo('')
+        setCnae('')
+        setCnaeDescricao('')
+        setCapitalSocial('')
+        setNaturezaJuridica('')
+        setSituacao('')
+        setDataAbertura('')
+        setTipoEmpresa('')
+        setPorte('')
+        setDataSituacao('')
+        setMotivoSituacao('')
+        setSituacaoEspecial('')
+        setDataSituacaoEspecial('')
+        setSusep('')
+
+        setEstadoCivil('')
+        setProfissao('')
+        setAgencia('')
+        setNumeroConta('')
+        setTipoConta('')
+        setChavePix('')
+        setNomeCorrentista('')
+        setCpfCorrentista('')
+        setCnpjCorrentista('')
+
+        setUf('')
+
+
+        setBanco_id(undefined)
+        setNacionalidade_id(7)
+        setValidadoCPF(false)
+
+
+    }
+
+
+
+    const validaSalvar = () => {
+
+
         if (cnpjCorrentista.toString().length > 0) {
 
             if (!validaCNPJ(cnpjCorrentista.replaceAll('.', '').replaceAll('-', '').replaceAll('/', ''))) {
@@ -525,7 +641,6 @@ const FormCorretor = (props: any) => {
 
 
 
-    
 
 
 
@@ -537,12 +652,10 @@ const FormCorretor = (props: any) => {
         setOpen(false)
 
         var dataPost = {
+            cliente_id: cliente_id,
 
-            cliente_id: props.cliente_id,
-            
             cpf: cpf ? cpf.replaceAll('.', '').replaceAll('-', '') : null,
             nome: nome,
-            
             cnpj: cnpj ? cnpj.replaceAll('.', '').replaceAll('-', '').replaceAll('/', '') : null,
             nomeFantasia: nomeFantasia,
             razaoSocial: razaoSocial,
@@ -561,11 +674,25 @@ const FormCorretor = (props: any) => {
             telefoneFixoPessoaContato: telefoneFixoPessoaContato,
             telefoneCelularPessoaContato: telefoneCelularPessoaContato,
             observacao: observacao,
-            comissaoPorcentagem: comissaoPorcentagem,
-            premioMinimo: premioMinimo ? premioMinimo.toString().replaceAll('.', '').replaceAll(',', '.') : null,
+            dataUltimaAtualizacao: dataUltimaAtualizacao ? moment(dataUltimaAtualizacao, 'DD/MM/YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss') : null,
+
+
+            // Converte para número se houver valor, senão envia null
+            comissaoPorcentagem: comissaoPorcentagem ? Number(comissaoPorcentagem) : null,
+
+            // Converte o formato numérico: "1.000,50" para "1000.50" e depois para float
+            premioMinimo: premioMinimo
+                ? parseFloat(premioMinimo.toString().replaceAll('.', '').replaceAll(',', '.'))
+                : null,
+
             cnae: cnae,
             cnaeDescricao: cnaeDescricao,
-            capitalSocial: capitalSocial ? capitalSocial.toString().replaceAll('.', '').replaceAll(',', '.') : null,
+
+            // Converte o capitalSocial para float, caso exista valor
+            capitalSocial: capitalSocial
+                ? parseFloat(capitalSocial.toString().replaceAll('.', '').replaceAll(',', '.'))
+                : null,
+
             naturezaJuridica: naturezaJuridica,
             situacao: situacao,
             dataAbertura: dataAbertura ? moment(dataAbertura, 'DD/MM/YYYY').format('YYYY-MM-DD') : null,
@@ -576,6 +703,7 @@ const FormCorretor = (props: any) => {
             situacaoEspecial: situacaoEspecial,
             dataSituacaoEspecial: dataSituacaoEspecial ? moment(dataSituacaoEspecial, 'DD/MM/YYYY').format('YYYY-MM-DD') : null,
             susep: susep,
+
             ad_usr: usuario_id_session,
             nacionalidade_id: nacionalidade_id,
             estadoCivil: estadoCivil,
@@ -585,22 +713,20 @@ const FormCorretor = (props: any) => {
             numeroConta: numeroConta,
             tipoConta: tipoConta,
             chavePix: chavePix,
-            produtor_id: produtor_id,
             tipoJuridico: tipoJuridico,
             nomeCorrentista: nomeCorrentista,
             cpfCorrentista: cpfCorrentista ? cpfCorrentista.replaceAll('.', '').replaceAll('-', '') : null,
-            cnpjCorrentista: cnpjCorrentista ? cnpjCorrentista.replaceAll('.', '').replaceAll('-', '').replaceAll('/', '') : null,
-            bloqueado: bloqueado,
+            cnpjCorrentista: cnpjCorrentista ? cnpjCorrentista.replaceAll('.', '').replaceAll('-', '').replaceAll('/', '') : null
+        };
 
-        }
 
         //console.log(dataPost)
         //return false
 
-        if (props.corretor_id) {
+        if (props.produtor_id) {
 
 
-            api.put(`corretor/${props.corretor_id}`, dataPost).then((result) => {
+            api.put(`produtor/${props.produtor_id}`, dataPost).then((result) => {
 
                 //console.log(result.data)
 
@@ -610,7 +736,7 @@ const FormCorretor = (props: any) => {
                     setOpen(false)
                     //props.setShow(false)
                     toast.success('Registro salvo com sucesso!')
-                    props.carregaCorretores()
+                    props.carregaProdutores()
                     //console.log('aqui')
 
                 }
@@ -625,14 +751,14 @@ const FormCorretor = (props: any) => {
         } else {
 
 
-            api.post('corretor', dataPost).then((result) => {
+            api.post('produtor', dataPost).then((result) => {
 
                 if (result.data.status == 'ok') {
 
                     setOpen(false)
                     props.setShow(false)
                     toast.success('Registro salvo com sucesso!')
-                    props.carregaCorretores()
+                    props.carregaProdutores()
 
                 }
 
@@ -645,173 +771,9 @@ const FormCorretor = (props: any) => {
 
         }
 
-    }
-
-    const consultaCNPJ = async () => {
-
-        try {
-
-            var resultado = await api.get(`consultaCNPJ/${cnpj.replaceAll('.', '').replaceAll('-', '').replaceAll('/', '')}`)
-            return resultado.data
-
-        } catch(err) {
-
-            return err
-
-        }
-
-        
 
     }
 
-
-
-    const verificaCNPJ = async () => {
-
-
-        if (!validaCNPJ(cnpj.replaceAll('.', '').replaceAll('-', '').replaceAll('/', ''))) {
-
-            toast.error('CNPJ inválido!')
-            return false
-
-        } else {
-
-            var data = await consultaCNPJ()
-            
-            if (data) {
-
-                setValidadoCNPJ(true)
-                setRazaoSocial(data.nome)
-                setNomeFantasia(data.fantasia)
-                setNaturezaJuridica(data.natureza_juridica)
-                setTipoEmpresa(data.tipo)
-                setPorte(data.porte)
-                setCapitalSocial(
-                    data.capital_social
-                      ? Number(data.capital_social).toLocaleString('pt-BR', {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })
-                      : ''
-                  )
-
-                setCnae(data.atividade_principal[0].code)
-                setCnaeDescricao(data.atividade_principal[0].text)
-                setSituacao(data.situacao)
-                setDataSituacao(data.data_situacao)
-                setMotivoSituacao(data.motivo_situacao)
-                setSituacaoEspecial(data.situacao_especial)
-                setDataSituacaoEspecial(data.data_situacao_especial)
-                setDataAbertura(data.abertura)
-                setDataUltimaAtualizacao(data.ultima_atualizacao ? moment(data.ultima_atualizacao).utc().format('DD/MM/YYYY HH:mm:ss') : undefined)
-
-                setLogradouro(data.logradouro)
-                setNumero(data.numero)
-                setBairro(data.bairro)
-                setComplemento(data.complemento)
-                setUf(data.uf)
-                setCep(data.cep ? data.cep.replaceAll('.', '') : '')
-                    
-                verificaCEP(data.cep ? data.cep.replaceAll('.', '') : '')
-
-            }
-
-
-        }
-
-
-    }
-
-
-    useEffect(() => {
-
-        listaUf();
-        listaBanco();
-        listaNacionalidade();
-
-    }, [])
-
-    useEffect(() => {
-
-        //limpa()
-
-        if (cliente_id) {
-
-            listaProdutor();
-
-        }
-
-    }, [cliente_id]);
-
-    useEffect(() => {
-        listaMunicipios();
-    }, [uf]);
-
-
-    const limpa = () => {
-
-        
-
-        setClienteUsuario_id(undefined)
-        setCPF('')
-        setNome('')
-        setCnpj('')
-        setNomeFantasia('')
-        setRazaoSocial('')
-        setCep('')
-        setIbge_codigo('')
-        setIbge_descri('')
-        
-        setLogradouro('')
-        setNumero('')
-        setComplemento('')
-        setBairro('')
-        setTelefoneFixo('')
-        setTelefoneCelular('')
-        setEmail('')
-        setPessoaContato('')
-        setEmailPessoaContato('')
-        setTelefoneFixoPessoaContato('')
-        setTelefoneCelularPessoaContato('')
-        setObservacao('')
-        setComissaoPorcentagem(undefined)
-        setPremioMinimo('')
-        setCnae('')
-        setCnaeDescricao('')
-        setCapitalSocial('')
-        setNaturezaJuridica('')
-        setSituacao('')
-        setDataAbertura('')
-        setTipoEmpresa('')
-        setPorte('')
-        setDataSituacao('')
-        setMotivoSituacao('')
-        setSituacaoEspecial('')
-        setDataSituacaoEspecial('')
-        setSusep('')
-        
-        setEstadoCivil('')
-        setProfissao('')
-        setAgencia('')
-        setNumeroConta('')
-        setTipoConta('')
-        setChavePix('')
-        setNomeCorrentista('')
-        setCpfCorrentista('')
-        setCnpjCorrentista('')
-        
-        setUf('')
-        setProdutores([])
-        setProdutor_id(undefined)
-        
-        setBanco_id(undefined)        
-        setNacionalidade_id(7)
-        setBloqueado(undefined)
-        
-
-    }
-
-    
 
 
     return (
@@ -820,28 +782,28 @@ const FormCorretor = (props: any) => {
             <div className="row g-3">
 
                 <div className="col-md-6">
-                        
-                        <select className="form-control" value={cliente_id} 
-                        onChange={event => setCliente_id(event.target.value ? Number(event.target.value) : undefined)} 
-                        disabled={ props.corretor_id }
-                        >
-                            <option value="">[Emissor da garantia]</option>
-                            {
 
-                                clientes.map((rs: iClientes) => 
-                                    
-                                    <option value={rs.cliente_id}>{rs.cnpj} - {rs.nomeFantasia}</option>
-                                )
+                    <select className="form-control" value={cliente_id}
+                        onChange={event => setCliente_id(event.target.value ? Number(event.target.value) : undefined)}
+                        disabled={props.corretor_id}
+                    >
+                        <option value="">[Emissor da garantia]</option>
+                        {
 
-                            }
+                            clientes.map((rs: iClientes) =>
 
-                        </select>
+                                <option value={rs.cliente_id}>{rs.cnpj} - {rs.nomeFantasia}</option>
+                            )
+
+                        }
+
+                    </select>
                 </div>
                 <div className="col-md-6">
-                    
-                    <select  className="form-control" value={tipoJuridico} onChange={event => setTipoJuridico(event.target.value)} 
-                    style={{ backgroundColor: '#f4f2ff'}}
-                    disabled={ props.corretor_id }>
+
+                    <select className="form-control" value={tipoJuridico} onChange={event => setTipoJuridico(event.target.value)}
+                        style={{ backgroundColor: '#f4f2ff' }}
+                        disabled={props.corretor_id}>
                         <option value="">[Informe o tipo jurídico]</option>
                         <option value="F">Pessoa Física</option>
                         <option value="J">Pessoa Jurídica</option>
@@ -849,7 +811,7 @@ const FormCorretor = (props: any) => {
 
                     </select>
                 </div>
-                
+
                 {
                     cliente_id && tipoJuridico && (
 
@@ -886,12 +848,12 @@ const FormCorretor = (props: any) => {
 
                                                 <div className="col-md-3">
                                                     <label className="form-label">CNPJ</label>
-                                                    <TextInput placeholder="00.000.000/0000-00" 
-                                                    maskType="cnpj" 
-                                                    type="text" 
-                                                    className="form-control" 
-                                                    disabled={ props.corretor_id }
-                                                    style={{ backgroundColor: '#e9f2f1' }} onBlur={verificaCNPJ} value={cnpj} onChange={event => setCnpj(event.target.value)} />
+                                                    <TextInput placeholder="00.000.000/0000-00"
+                                                        maskType="cnpj"
+                                                        type="text"
+                                                        className="form-control"
+                                                        disabled={props.produtor_id}
+                                                        style={{ backgroundColor: '#e9f2f1' }} onBlur={verificaCNPJ} value={cnpj} onChange={event => setCnpj(event.target.value)} />
                                                 </div>
                                                 <div className="col-md-9">
                                                     <label className="form-label">Razão Social</label>
@@ -1004,59 +966,59 @@ const FormCorretor = (props: any) => {
 
                                                 <div className="col-md-2" style={{ display: tipoJuridico == 'F' ? 'table-row' : 'none' }}>
                                                     <label className="form-label">CPF</label>
-                                                    <TextInput placeholder="000.000.0000-00" 
-                                                    maskType="cpf" 
-                                                    type="text" 
-                                                    className="form-control" 
-                                                    disabled={ props.corretor_id }
-                                                    style={{ backgroundColor: '#e9f2f1' }} onBlur={verificaCPF} value={cpf} onChange={event => setCPF(event.target.value)} />
+                                                    <TextInput placeholder="000.000.0000-00"
+                                                        maskType="cpf"
+                                                        type="text"
+                                                        className="form-control"
+                                                        disabled={props.produtor_id}
+                                                        style={{ backgroundColor: '#e9f2f1' }} onBlur={verificaCPF} value={cpf} onChange={event => setCPF(event.target.value)} />
                                                 </div>
-                                                
+
                                                 <div className="col-md-2" style={{ display: tipoJuridico == 'O' ? 'table-row' : 'none' }}>
                                                     <label className="form-label">Documento</label>
                                                     <input type="text" className="form-control" style={{ backgroundColor: '#e9f2f1' }} />
                                                 </div>
-                                                
 
-                                             
 
-                                                            <div className="col-md-10">
-                                                                <label className="form-label">Nome</label>
-                                                                <input type="text" className="form-control" value={nome} maxLength={250} onChange={event => setNome(event.target.value)} disabled />
-                                                            </div>
 
-                                                            <div className="col-md-3">
-                                                                <label className="form-label">Nacionalidade</label>
-                                                                <select
-                                                                    className="form-control"
-                                                                    value={nacionalidade_id}
-                                                                    onChange={(e) => setNacionalidade_id(e.target.value ? Number(e.target.value) : undefined)}
-                                                                >
-                                                                    <option value="">[Selecione]</option>
-                                                                    {nacionalidades}
-                                                                </select>
-                                                            </div>
 
-                                                            <div className="col-md-3">
-                                                                <label className="form-label">Estado Civil</label>
-                                                                <select className="form-control" value={estadoCivil} onChange={event => setEstadoCivil(event.target.value)} >
-                                                                    <option value="">[Selecione]</option>
-                                                                    <option value="Casado">Casado</option>
-                                                                    <option value="Divorciado">Divorciado</option>
-                                                                    <option value="Separado">Separado judicialmente</option>
-                                                                    <option value="Solteiro">Solteiro</option>
-                                                                    <option value="Viúvo">Viúvo</option>
+                                                <div className="col-md-10">
+                                                    <label className="form-label">Nome</label>
+                                                    <input type="text" className="form-control" value={nome} maxLength={250} onChange={event => setNome(event.target.value)} disabled />
+                                                </div>
 
-                                                                </select>
-                                                            </div>
-                                                            <div className="col-md-3">
-                                                                <label className="form-label">Profissão</label>
-                                                                <input type="text" className="form-control" value={profissao} onChange={event => setProfissao(event.target.value)} maxLength={150} />
-                                                            </div>
-                                                            <div className="col-md-3">
-                                                                <label className="form-label">SUSEP</label>
-                                                                <input type="text" className="form-control" value={susep} onChange={event => setSusep(event.target.value)} maxLength={50} />
-                                                            </div>
+                                                <div className="col-md-3">
+                                                    <label className="form-label">Nacionalidade</label>
+                                                    <select
+                                                        className="form-control"
+                                                        value={nacionalidade_id}
+                                                        onChange={(e) => setNacionalidade_id(e.target.value ? Number(e.target.value) : undefined)}
+                                                    >
+                                                        <option value="">[Selecione]</option>
+                                                        {nacionalidades}
+                                                    </select>
+                                                </div>
+
+                                                <div className="col-md-3">
+                                                    <label className="form-label">Estado Civil</label>
+                                                    <select className="form-control" value={estadoCivil} onChange={event => setEstadoCivil(event.target.value)} >
+                                                        <option value="">[Selecione]</option>
+                                                        <option value="Casado">Casado</option>
+                                                        <option value="Divorciado">Divorciado</option>
+                                                        <option value="Separado">Separado judicialmente</option>
+                                                        <option value="Solteiro">Solteiro</option>
+                                                        <option value="Viúvo">Viúvo</option>
+
+                                                    </select>
+                                                </div>
+                                                <div className="col-md-3">
+                                                    <label className="form-label">Profissão</label>
+                                                    <input type="text" className="form-control" value={profissao} onChange={event => setProfissao(event.target.value)} maxLength={150} />
+                                                </div>
+                                                <div className="col-md-3">
+                                                    <label className="form-label">SUSEP</label>
+                                                    <input type="text" className="form-control" value={susep} onChange={event => setSusep(event.target.value)} maxLength={50} />
+                                                </div>
 
 
                                             </div>
@@ -1067,7 +1029,7 @@ const FormCorretor = (props: any) => {
                             }
 
 
-                            {(clienteUsuario_id || props.corretor_id || validadoCNPJ == true) && (
+                            {(validadoCPF == true || props.produtor_id || validadoCNPJ == true) && (
 
                                 <Tab eventKey="dadosEndereco" title={
                                     <>
@@ -1078,7 +1040,7 @@ const FormCorretor = (props: any) => {
                                     </>
                                 }>
 
-                                    <div className="row g-3">
+                                    <form className="row g-3">
                                         <div className="col-md-2">
                                             <label className="form-label">CEP</label>
                                             <TextInput placeholder="00000-000" maskType="cep" type="text" className="form-control" value={cep} onChange={event => setCep(event.target.value)} onBlur={event => verificaCEP(event.target.value)} />
@@ -1120,7 +1082,7 @@ const FormCorretor = (props: any) => {
                                             </select>
                                         </div>
 
-                                    </div>
+                                    </form>
 
 
                                 </Tab>
@@ -1130,7 +1092,7 @@ const FormCorretor = (props: any) => {
 
                             {
 
-                                (clienteUsuario_id || props.corretor_id || validadoCNPJ == true) &&
+                                (validadoCPF == true || props.produtor_id || validadoCNPJ == true) &&
 
                                 (
 
@@ -1149,36 +1111,26 @@ const FormCorretor = (props: any) => {
 
                                         <div className="row g-3">
 
-                                            <div className="col-md-4">
-                                                <label className="form-label">Produtor</label>
-                                                <select className="form-control"
-                                                    value={produtor_id}
-                                                    onChange={(e) => setProdutor_id(Number(e.target.value))}
-                                                >
 
-                                                    <option value="">[Selecione]</option>
-                                                    {produtores}
-                                                </select>
-                                            </div>
-
-                                            <div className="col-md-4">
+                                            <div className="col-md-6">
                                                 <label className="form-label">Comissão (%)</label>
                                                 <input type="number" className="form-control" placeholder='Informe o percentual' value={comissaoPorcentagem} onChange={event => setComissaoPorcentagem(event.target.value ? Number(event.target.value) : undefined)} />
                                             </div>
-                                            <div className="col-md-4">
+                                            <div className="col-md-6">
                                                 <label className="form-label">Prêmio mínimo:</label>
+
                                                 <Controller
                                                     name="premioMinimo"
                                                     control={control}
                                                     render={({ field }) => (
-                                                    <CurrencyInput
-                                                        value={premioMinimo}
-                                                        onValueChange={(value) => field.onChange(value)} // Atualiza corretamente no RHF
-                                                        onChange={event => setPremioMinimo(event.target.value)}
-                                                        placeholder="Digite um valor"
-                                                        className="form-control"
-                                                        
-                                                    />
+                                                        <CurrencyInput
+                                                            value={premioMinimo}
+                                                            onValueChange={(value) => field.onChange(value)} // Atualiza corretamente no RHF
+                                                            onChange={event => setPremioMinimo(event.target.value)}
+                                                            placeholder="Digite um valor"
+                                                            className="form-control"
+
+                                                        />
                                                     )}
                                                 />
                                             </div>
@@ -1193,7 +1145,7 @@ const FormCorretor = (props: any) => {
 
                             {
 
-                                (clienteUsuario_id || props.corretor_id || validadoCNPJ == true) &&
+                                (validadoCPF == true || props.corretor_id || validadoCNPJ == true) &&
 
                                 (
 
@@ -1248,7 +1200,7 @@ const FormCorretor = (props: any) => {
                                             </div>
 
                                             <div className="col-md-8">
-                                                <label className="form-label">Nome do Correntista</label>
+                                                <label className="form-label">Correntista</label>
                                                 <input type="text" className="form-control" value={nomeCorrentista} onChange={event => setNomeCorrentista(event.target.value ? String(event.target.value) : '')} />
                                             </div>
 
@@ -1270,7 +1222,7 @@ const FormCorretor = (props: any) => {
 
                             {
 
-                                (clienteUsuario_id || props.corretor_id || validadoCNPJ == true) && (
+                                (validadoCPF == true || props.corretor_id || validadoCNPJ == true) && (
 
                                     <Tab eventKey="outrasInformacoes" title={
                                         <>
@@ -1281,15 +1233,15 @@ const FormCorretor = (props: any) => {
                                         </>
                                     }>
 
-                                        <div className="row g-3">
+                                        <form className="row g-3">
 
                                             <div className="col-md-2">
                                                 <label className="form-label">Tel Fixo</label>
-                                                <TextInput placeholder="(00) 0000-0000" maskType="phoneFixo" type="text" className="form-control" value={telefoneFixo} onChange={event => setTelefoneFixo(event.target.value)} />
+                                                <TextInput placeholder="(00) 0000-0000" maskType="phoneFixo" type="text" className="form-control" value={telefoneFixoPessoaContato} onChange={event => setTelefoneFixoPessoaContato(event.target.value)} />
                                             </div>
                                             <div className="col-md-2">
                                                 <label className="form-label">Tel Celular</label>
-                                                <TextInput placeholder="(00) 00000-0000" maskType="phone" type="text" className="form-control" value={telefoneCelular} onChange={event => setTelefoneCelular(event.target.value)} />
+                                                <TextInput placeholder="(00) 00000-0000" maskType="phone" type="text" className="form-control" value={telefoneCelularPessoaContato} onChange={event => setTelefoneCelularPessoaContato(event.target.value)} />
                                             </div>
 
                                             <div className="col-md-4">
@@ -1306,40 +1258,32 @@ const FormCorretor = (props: any) => {
                                                 <textarea rows={3} className="form-control" maxLength={1000} value={observacao} onChange={event => setObservacao(event.target.value)} />
                                             </div>
 
-                                            <div className="col-md-2">
-                                                <label className="form-label">Bloqueado</label>
-                                                <select className="form-control" value={bloqueado} onChange={event => setBloqueado(event.target.value ? Number(event.target.value) : undefined)}>
-                                                    <option value="">[Selecione]</option>
-                                                    <option value="1">Sim</option>
-                                                    <option value="0">Não</option>
-                                                </select>
-                                            </div>
 
-                                        </div>
+                                        </form>
 
                                     </Tab>
 
                                 )
                             }
 
-                            
+
 
 
                         </Tabs>
 
                     )
                 }
-            
-                
+
+
 
 
 
                 <div className="col-md-12" style={{ marginTop: 50, textAlign: 'right' }}>
-                    
-                        
-                        <button type="button" className="btn btn-secondary" onClick={() => props.setShow(false)} style={{ marginLeft: 5 }}>Fechar</button>
-                        <button type="button" className="btn btn-success" style={{ marginLeft: 5, display: clienteUsuario_id || props.corretor_id || validadoCNPJ == true ? 'table-row' : 'none' }} onClick={validaSalvar}>Salvar</button>
-                    
+
+
+                    <button type="button" className="btn btn-secondary" onClick={() => props.setShow(false)} style={{ marginLeft: 5 }}>Fechar</button>
+                    <button type="button" className="btn btn-success" style={{ marginLeft: 5, display: validadoCPF == true || props.corretor_id || validadoCNPJ == true ? 'table-row' : 'none' }} onClick={validaSalvar}>Salvar</button>
+
                 </div>
             </div>
 
@@ -1386,4 +1330,4 @@ const FormCorretor = (props: any) => {
 
 }
 
-export default FormCorretor
+export default FormProdutor

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import Badge from 'react-bootstrap/Badge';
 
-import ModalCorretor from "../modals/ModalCorretor"
+import ModalProdutor from "../modals/ModalProdutor"
 import moment from 'moment'
 
 import { MaterialReactTable, MRT_ColumnDef } from 'material-react-table';
@@ -9,7 +9,7 @@ import { MRT_Localization_PT_BR } from 'material-react-table/locales/pt-BR';
 import LoaderIcon from 'react-loading-icons'
 import api from "../components/api";
 
-const Corretor = (props: any) => {
+const Produtor = (props: any) => {
 
     const [show, setShow] = useState<boolean>(false)
     const [now, setNow] = useState<string | undefined>('')
@@ -18,7 +18,7 @@ const Corretor = (props: any) => {
 
     interface iDados {
 
-        corretor_id: number,
+        produtor_id: number,
         cliente_id: number,
         nome: string,
         cpf: string,
@@ -49,7 +49,7 @@ const Corretor = (props: any) => {
 
     const [cliente_id, setCliente_id] = useState<number | undefined>()
     const [clientes, setClientes] = useState<[]>([])
-    const [corretor_id, setCorretor_id] = useState<number | undefined>()
+    const [produtor_id, setProdutor_id] = useState<number | undefined>()
 
     const dadosUsuarios = sessionStorage.getItem('dadosUsuarios')
 
@@ -70,7 +70,7 @@ const Corretor = (props: any) => {
 
 
 
-    const carregaCorretores = () => {
+    const carregaProdutores = () => {
 
 
         var dataPost = {
@@ -81,15 +81,15 @@ const Corretor = (props: any) => {
 
         setCarregando('block')
 
-        api.post('corretorListaTodos', dataPost).then((result) => {
+        api.post('produtorListaTodos', dataPost).then((result) => {
 
-            
+            //console.log(result.data)
 
             setResultado(result.data.map((rs: iDados) => {
 
                 return {
 
-                    corretor_id: rs.corretor_id,
+                    produtor_id: rs.produtor_id,
                     nome: rs.tipoJuridico == 'F' ? rs.nome : rs.razaoSocial,
                     cpf: rs.tipoJuridico == 'F' ? rs.cpf : rs.cnpj,
                     tipoJuridico: rs.tipoJuridico,
@@ -116,7 +116,7 @@ const Corretor = (props: any) => {
 
         if (cliente_id) {
 
-            carregaCorretores()
+            carregaProdutores()
 
         }
 
@@ -183,7 +183,7 @@ const Corretor = (props: any) => {
 						<nav aria-label="breadcrumb">
 							<ol className="breadcrumb mb-0 p-0">
 								
-								<li className="breadcrumb-item active" aria-current="page">Corretor</li>
+								<li className="breadcrumb-item active" aria-current="page">Produtor</li>
 							</ol>
 						</nav>
 					</div>
@@ -193,7 +193,7 @@ const Corretor = (props: any) => {
             <div className="col-md-12" style={{ marginBottom: 20}}>
                 <div className="d-md-flex d-grid align-items-center gap-2">
                     
-                    <button type="button" className="btn btn-primary" onClick={() => {setNow(moment().format('YYYY-MM-DD HH:mm:ss'));setCliente_id(undefined);setCorretor_id(undefined);setShow(true)}}>+ Novo</button>
+                    <button type="button" className="btn btn-primary" onClick={() => {setNow(moment().format('YYYY-MM-DD HH:mm:ss'));setCliente_id(undefined);setProdutor_id(undefined);setShow(true)}}>+ Novo</button>
                     <button type="button" className="btn btn-success">Exportar XLSX</button>
                 
                 </div>
@@ -261,7 +261,7 @@ const Corretor = (props: any) => {
                                         muiTableBodyRowProps={({ row }) => ({
                                             onClick: () => {
                                                 setShow(true);
-                                                setCorretor_id(row.original.corretor_id)
+                                                setProdutor_id(row.original.produtor_id)
                                                 setNow(moment().format('YYYYMMDDHHmmss'))
                                             },
                                             sx: {
@@ -278,7 +278,7 @@ const Corretor = (props: any) => {
                     </div>
             </div>
             
-            <ModalCorretor corretor_id={corretor_id} cliente_id={cliente_id} show={show} setShow={setShow} now={now} setNow={setNow} carregaCorretores={carregaCorretores}/>
+            <ModalProdutor produtor_id={produtor_id} cliente_id={cliente_id} show={show} setShow={setShow} now={now} setNow={setNow} carregaProdutores={carregaProdutores}/>
 
         </div>
 
@@ -287,4 +287,4 @@ const Corretor = (props: any) => {
 
 }
 
-export default Corretor
+export default Produtor

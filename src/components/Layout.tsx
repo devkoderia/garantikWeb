@@ -148,8 +148,8 @@ const Layout = () => {
 
                 <li><a className="dropdown-item" href="/Produtor"><i className='material-icons-outlined'>layers</i>Produtor</a></li>
                 <li><a className="dropdown-item" href="/Corretor"><i className='material-icons-outlined'>folder</i>Corretor</a></li>
-                <li><a className="dropdown-item" href="/Afiancado"><i className='material-icons-outlined'>source</i>Afiançado</a></li>
-                <li><a className="dropdown-item" href="/Beneficiario"><i className='material-icons-outlined'>backup</i>Beneficiário</a></li>
+                <li><a className="dropdown-item" href="/Tomador"><i className='material-icons-outlined'>source</i>Tomador</a></li>
+                <li><a className="dropdown-item" href="/Favorecido"><i className='material-icons-outlined'>backup</i>Favorecido</a></li>
                 <li><a className="dropdown-item" href="/Proposta"><i className='material-icons-outlined'>account_circle</i>Proposta</a></li>
                 <li><a className="dropdown-item" href="/Fianca"><i className='material-icons-outlined'>note_alt</i>Fiança</a></li>
                 
