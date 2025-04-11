@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 //import Button from 'react-bootstrap/Button';
-import FormTomador from '../componentsPage/FormTomador';
+import FormFavorecido from '../componentsPage/FormFavorecido';
 
 const ModalTomador = (props: any) => {
 
@@ -43,7 +43,7 @@ const ModalTomador = (props: any) => {
                 <Modal.Title id="example-modal-sizes-title-xl">
 
                     
-                        Tomador
+                        Favorecido
 
 
 
@@ -52,11 +52,12 @@ const ModalTomador = (props: any) => {
                 <Modal.Body>
 
                             
-                            
-                                <FormTomador cliente_id={props.cliente_id} tomador_id={props.tomador_id} setShow={props.setShow} now={props.now} carregaTomadores={props.carregaTomadores} />
-                            
-                            
-                        
+                            {
+                             
+                                <FormFavorecido cliente_id={props.cliente_id} favorecido_id={props.favorecido_id} setShow={props.setShow} now={props.now} carregaFavorecidos={props.carregaFavorecidos} />
+                             
+                            }
+                                
                     
                             
 

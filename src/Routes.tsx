@@ -8,13 +8,17 @@ import Dashboard from './pages/Dashboard'
 import Usuarios from './pages/Usuarios'
 
 
-import PropostaCadastro from './pages/PropostaCadastro'
-import FormIntro from './pages/FormIntro'
+import Emissao from './pages/Emissao'
+
 
 import CadastroConvite from './pages/CadastroConvite'
 import Corretor from './pages/Corretor'
 import Produtor from './pages/Produtor'
 import Tomador from './pages/Tomador'
+import Favorecido from './pages/Favorecido'
+
+import AdmUsuarios from './pages/AdmUsuarios'
+import AdmClientes from './pages/AdmClientes'
 
 const Rotas = () => {
 
@@ -34,11 +38,14 @@ const Rotas = () => {
                         <Route path='/Produtor' element={<Produtor />} />
                         <Route path='/Corretor' element={<Corretor/>} />
                         <Route path='/Tomador' element={<Tomador />} />
-                        <Route path='/Favorecido' element={<FormIntro tipo='Beneficiário' />} />
+                        <Route path='/Favorecido' element={<Favorecido />} />
                         
-                        <Route path='/Proposta' element={<PropostaCadastro />} />
+                        <Route path='/Emissao' element={<Emissao />} />
 
                         <Route path='/Usuarios' element={<Usuarios />} />
+
+                        <Route path='/Adm/Usuarios' element={<AdmUsuarios />} />
+                        <Route path='/Adm/Clientes' element={<AdmClientes />} />
                         
                 </Route>
 

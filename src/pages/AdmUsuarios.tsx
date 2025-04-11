@@ -56,6 +56,7 @@ const Usuarios = () => {
 
     const dadosUsuarios = sessionStorage.getItem('dadosUsuarios')
 
+    /*
     useEffect(() => {
 
 		if (dadosUsuarios) {
@@ -64,14 +65,29 @@ const Usuarios = () => {
             
             setClientes(dados.clientes)
             setUsuario_id_session(dados.usuario_id)
-            setCliente_id(dados.clientes.length == 1 ? dados.clientes[0].cliente_id : undefined)
+            //setCliente_id(dados.clientes.length == 1 ? dados.clientes[0].cliente_id : undefined)
 		    //setCliente_id(dados.cliente_id ? Number(dados.cliente_id) : undefined)
 	
 
 		}
 
 	}, [dadosUsuarios])
+    */
 
+    const carregaClientes = () => {
+
+
+        
+
+
+    }
+
+
+    useEffect(() => {
+
+        carregaClientes()
+
+    }, [])
 
 
 
@@ -163,7 +179,7 @@ const Usuarios = () => {
 						<nav aria-label="breadcrumb">
 							<ol className="breadcrumb mb-0 p-0">
 								
-								<li className="breadcrumb-item active" aria-current="page">Gestão</li>
+								<li className="breadcrumb-item active" aria-current="page">Administração</li>
 							</ol>
 						</nav>
 					</div>
@@ -182,7 +198,7 @@ const Usuarios = () => {
                         <div className="col-md-12" style={{ marginBottom: 20}}>
                             <div className="d-md-flex d-grid align-items-center gap-2">
                                 
-                                <button type="button" className="btn btn-primary" onClick={() => {setNowConvite(moment().format('YYYYMMDDHHmmss'));setShow(false);setShowConvite(true)}}>+ Convidar usuário</button>
+                                <button type="button" className="btn btn-primary" onClick={() => {setNowConvite(moment().format('YYYYMMDDHHmmss'));setShow(false);setShowConvite(true)}}>+ Novo Convite</button>
                                 <button type="button" className="btn btn-success">Exportar XLSX</button>
                             
                             </div>
@@ -190,8 +206,8 @@ const Usuarios = () => {
 
                         <div className="col-md-12">
                             
-                            <select className="form-control" value={cliente_id} disabled={ clientes.length > 1 ? false : true } onChange={event => setCliente_id(event.target.value ? Number(event.target.value) : undefined)} >
-                                { clientes.length > 1 && ( <option value="">[Selecione]</option> )}
+                            <select className="form-control" value={cliente_id} onChange={event => setCliente_id(event.target.value ? Number(event.target.value) : undefined)} >
+                                <option value="">[Selecione]</option>
                                 
                                 {
 
@@ -203,7 +219,7 @@ const Usuarios = () => {
                                 }
 
                             </select>
-
+                            
                         </div>
 
                         <div className="col-12 col-xl-12">

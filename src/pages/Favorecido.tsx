@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import Badge from 'react-bootstrap/Badge';
 
-import ModalProdutor from "../modals/ModalProdutor"
+import ModalFavorecido from "../modals/ModalFavorecido"
 import moment from 'moment'
 
 import { MaterialReactTable, MRT_ColumnDef } from 'material-react-table';
@@ -9,7 +9,7 @@ import { MRT_Localization_PT_BR } from 'material-react-table/locales/pt-BR';
 import LoaderIcon from 'react-loading-icons'
 import api from "../components/api";
 
-const Produtor = (props: any) => {
+const Favorecido = (props: any) => {
 
     const [show, setShow] = useState<boolean>(false)
     const [now, setNow] = useState<string | undefined>('')
@@ -18,6 +18,7 @@ const Produtor = (props: any) => {
 
     interface iDados {
 
+        favorecido_id: number,
         produtor_id: number,
         cliente_id: number,
         nome: string,
@@ -29,8 +30,8 @@ const Produtor = (props: any) => {
         tipoJuridico: string,
         cnpj: string,
         razaoSocial: string,
-        
-        
+        bloqueado: boolean,
+        outroDocumento: string,
 
     }
 
@@ -49,8 +50,8 @@ const Produtor = (props: any) => {
 
     const [cliente_id, setCliente_id] = useState<number | undefined>()
     const [clientes, setClientes] = useState<[]>([])
-    const [produtor_id, setProdutor_id] = useState<number | undefined>()
-    
+    const [favorecido_id, setFavorecido_id] = useState<number | undefined>()
+
     const dadosUsuarios = sessionStorage.getItem('dadosUsuarios')
 
     useEffect(() => {
@@ -70,7 +71,7 @@ const Produtor = (props: any) => {
 
 
 
-    const carregaProdutores = () => {
+    const carregaFavorecidos = () => {
 
 
         var dataPost = {
@@ -78,22 +79,23 @@ const Produtor = (props: any) => {
             cliente_id: cliente_id,
 
         }
+        
 
         setCarregando('block')
 
-        api.post('produtorListaTodos', dataPost).then((result) => {
+        api.post('favorecidoListaTodos', dataPost).then((result) => {
 
-            //console.log(result.data)
+            
 
             setResultado(result.data.map((rs: iDados) => {
 
                 return {
 
-                    produtor_id: rs.produtor_id,
+                    favorecido_id: rs.favorecido_id,
                     nome: rs.tipoJuridico == 'F' ? rs.nome : rs.razaoSocial,
-                    cpf: rs.tipoJuridico == 'F' ? rs.cpf : rs.cnpj,
+                    cpf: rs.tipoJuridico == 'F' ? rs.cpf : rs.tipoJuridico == 'O' ? rs.outroDocumento : rs.cnpj,
                     tipoJuridico: rs.tipoJuridico,
-                    
+                    bloqueado: rs.bloqueado,
 
                 }
 
@@ -107,6 +109,7 @@ const Produtor = (props: any) => {
             setCarregando('none')
 
         })
+        
 
     }
 
@@ -116,7 +119,7 @@ const Produtor = (props: any) => {
 
         if (cliente_id) {
 
-            carregaProdutores()
+            carregaFavorecidos()
 
         }
 
@@ -129,7 +132,7 @@ const Produtor = (props: any) => {
             header: 'Tipo',
             Cell: ({ renderedCellValue, row }) => (
             
-                <Badge style={{ fontSize: '0.7rem' }} bg={ renderedCellValue == 'J' ? 'info' : 'primary'}>{renderedCellValue == 'J' ? 'Pessoa Jurídica' : 'Pessoa Física'}</Badge>
+                <Badge style={{ fontSize: '0.7rem' }} bg={ renderedCellValue == 'J' ? 'info' : renderedCellValue == 'O' ? 'warning' : 'primary'}>{renderedCellValue == 'J' ? 'Pessoa Jurídica' : renderedCellValue == 'O' ? 'Outro' : 'Pessoa Física'}</Badge>
            
             ),
 
@@ -152,8 +155,6 @@ const Produtor = (props: any) => {
 
 
 
-
-
     ]
 
     return (
@@ -167,7 +168,7 @@ const Produtor = (props: any) => {
 						<nav aria-label="breadcrumb">
 							<ol className="breadcrumb mb-0 p-0">
 								
-								<li className="breadcrumb-item active" aria-current="page">Produtor</li>
+								<li className="breadcrumb-item active" aria-current="page">Favorecido</li>
 							</ol>
 						</nav>
 					</div>
@@ -177,7 +178,7 @@ const Produtor = (props: any) => {
             <div className="col-md-12" style={{ marginBottom: 20}}>
                 <div className="d-md-flex d-grid align-items-center gap-2">
                     
-                    <button type="button" className="btn btn-primary" onClick={() => {setNow(moment().format('YYYY-MM-DD HH:mm:ss'));setCliente_id(clientes.length > 1 ? undefined : cliente_id);setProdutor_id(undefined);setShow(true)}}>+ Novo</button>
+                    <button type="button" className="btn btn-primary" onClick={() => {setNow(moment().format('YYYY-MM-DD HH:mm:ss'));setCliente_id(clientes.length > 1 ? undefined : cliente_id);setFavorecido_id(undefined);setShow(true)}}>+ Novo</button>
                     <button type="button" className="btn btn-success">Exportar XLSX</button>
                 
                 </div>
@@ -246,7 +247,7 @@ const Produtor = (props: any) => {
                                         muiTableBodyRowProps={({ row }) => ({
                                             onClick: () => {
                                                 setShow(true);
-                                                setProdutor_id(row.original.produtor_id)
+                                                setFavorecido_id(row.original.favorecido_id)
                                                 setNow(moment().format('YYYYMMDDHHmmss'))
                                             },
                                             sx: {
@@ -263,7 +264,7 @@ const Produtor = (props: any) => {
                     </div>
             </div>
             
-            <ModalProdutor produtor_id={produtor_id} cliente_id={cliente_id} show={show} setShow={setShow} now={now} setNow={setNow} carregaProdutores={carregaProdutores}/>
+            <ModalFavorecido favorecido_id={favorecido_id} cliente_id={cliente_id} show={show} setShow={setShow} now={now} setNow={setNow} carregaFavorecidos={carregaFavorecidos}/>
 
         </div>
 
@@ -272,4 +273,4 @@ const Produtor = (props: any) => {
 
 }
 
-export default Produtor
+export default Favorecido

@@ -188,7 +188,7 @@ const FormCorretor = (props: any) => {
 			var dados = JSON.parse(dadosUsuarios)
             
             setClientes(dados.clientes)
-
+            setCliente_id(dados.clientes.length == 1 ? dados.clientes[0].cliente_id : undefined)
 		    //setCliente_id(dados.cliente_id ? Number(dados.cliente_id) : undefined)
 	
 
@@ -469,7 +469,7 @@ const FormCorretor = (props: any) => {
         limpa()
         
         
-        if (props.corretor_id && props.cliente_id) {
+        if (props.corretor_id != null && props.cliente_id != null) {
 
             carregaCorretor()
 
@@ -483,7 +483,7 @@ const FormCorretor = (props: any) => {
 
         
         
-        if (cnpjCorrentista.toString().length > 0) {
+        if (cnpjCorrentista) {
 
             if (!validaCNPJ(cnpjCorrentista.replaceAll('.', '').replaceAll('-', '').replaceAll('/', ''))) {
 
@@ -495,7 +495,7 @@ const FormCorretor = (props: any) => {
         }
 
 
-        if (cpfCorrentista.toString().length > 0) {
+        if (cpfCorrentista) {
 
             if (!validaCPF(cpfCorrentista.replaceAll('.', '').replaceAll('-', ''))) {
 
@@ -507,7 +507,7 @@ const FormCorretor = (props: any) => {
         }
 
 
-        if (emailPessoaContato.toString().length > 0) {
+        if (emailPessoaContato) {
 
             if (!validaEmail(emailPessoaContato)) {
 
@@ -538,7 +538,7 @@ const FormCorretor = (props: any) => {
 
         var dataPost = {
 
-            cliente_id: props.cliente_id,
+            cliente_id: cliente_id,
             
             cpf: cpf ? cpf.replaceAll('.', '').replaceAll('-', '') : null,
             nome: nome,
@@ -590,7 +590,7 @@ const FormCorretor = (props: any) => {
             nomeCorrentista: nomeCorrentista,
             cpfCorrentista: cpfCorrentista ? cpfCorrentista.replaceAll('.', '').replaceAll('-', '') : null,
             cnpjCorrentista: cnpjCorrentista ? cnpjCorrentista.replaceAll('.', '').replaceAll('-', '').replaceAll('/', '') : null,
-            bloqueado: bloqueado,
+            bloqueado: bloqueado === 1 ? true : bloqueado === 0 ? false : null,
 
         }
 
@@ -821,21 +821,19 @@ const FormCorretor = (props: any) => {
 
                 <div className="col-md-6">
                         
-                        <select className="form-control" value={cliente_id} 
-                        onChange={event => setCliente_id(event.target.value ? Number(event.target.value) : undefined)} 
-                        disabled={ props.corretor_id }
-                        >
-                            <option value="">[Emissor da garantia]</option>
-                            {
+                    <select className="form-control" value={cliente_id} disabled={ clientes.length > 1 ? false : true } onChange={event => setCliente_id(event.target.value ? Number(event.target.value) : undefined)} >
+                        { clientes.length > 1 && ( <option value="">[Selecione]</option> )}
+                        
+                        {
 
-                                clientes.map((rs: iClientes) => 
-                                    
-                                    <option value={rs.cliente_id}>{rs.cnpj} - {rs.nomeFantasia}</option>
-                                )
+                            clientes.map((rs: iClientes) => 
+                                
+                                <option value={rs.cliente_id}>{rs.cnpj} - {rs.nomeFantasia}</option>
+                            )
 
-                            }
+                        }
 
-                        </select>
+                    </select>
                 </div>
                 <div className="col-md-6">
                     

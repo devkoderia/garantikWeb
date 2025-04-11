@@ -31,6 +31,7 @@ const Tomador = (props: any) => {
         cnpj: string,
         razaoSocial: string,
         bloqueado: boolean,
+        outroDocumento: string,
         
 
     }
@@ -61,7 +62,7 @@ const Tomador = (props: any) => {
 			var dados = JSON.parse(dadosUsuarios)
             
             setClientes(dados.clientes)
-
+            setCliente_id(dados.clientes.length == 1 ? dados.clientes[0].cliente_id : undefined)
 		    //setCliente_id(dados.cliente_id ? Number(dados.cliente_id) : undefined)
 	
 
@@ -79,11 +80,11 @@ const Tomador = (props: any) => {
             cliente_id: cliente_id,
 
         }
-        /*
+        
 
         setCarregando('block')
 
-        api.post('produtorListaTodos', dataPost).then((result) => {
+        api.post('tomadorListaTodos', dataPost).then((result) => {
 
             
 
@@ -91,9 +92,9 @@ const Tomador = (props: any) => {
 
                 return {
 
-                    produtor_id: rs.produtor_id,
+                    tomador_id: rs.tomador_id,
                     nome: rs.tipoJuridico == 'F' ? rs.nome : rs.razaoSocial,
-                    cpf: rs.tipoJuridico == 'F' ? rs.cpf : rs.cnpj,
+                    cpf: rs.tipoJuridico == 'F' ? rs.cpf : rs.tipoJuridico == 'O' ? rs.outroDocumento : rs.cnpj,
                     tipoJuridico: rs.tipoJuridico,
                     bloqueado: rs.bloqueado,
 
@@ -109,7 +110,7 @@ const Tomador = (props: any) => {
             setCarregando('none')
 
         })
-        */
+        
 
     }
 
@@ -132,7 +133,7 @@ const Tomador = (props: any) => {
             header: 'Tipo',
             Cell: ({ renderedCellValue, row }) => (
             
-                <Badge style={{ fontSize: '0.7rem' }} bg={ renderedCellValue == 'J' ? 'info' : 'primary'}>{renderedCellValue == 'J' ? 'Pessoa Jurídica' : 'Pessoa Física'}</Badge>
+                <Badge style={{ fontSize: '0.7rem' }} bg={ renderedCellValue == 'J' ? 'info' : renderedCellValue == 'O' ? 'warning' : 'primary'}>{renderedCellValue == 'J' ? 'Pessoa Jurídica' : renderedCellValue == 'O' ? 'Outro' : 'Pessoa Física'}</Badge>
            
             ),
 
@@ -150,24 +151,6 @@ const Tomador = (props: any) => {
             accessorKey: 'cpf',
             header: 'CPF/CNPJ',
             
-
-        },
-
-
- {
-            accessorKey: 'bloqueado',
-            header: 'Bloqueado',
-            Cell: ({ renderedCellValue, row }) => (
-            
-                <Badge style={{ fontSize: '0.7rem' }} bg={ renderedCellValue == true ? 'danger' : ''}>{renderedCellValue == true ? 'X' : ''}</Badge>
-           
-            ),
-            muiTableHeadCellProps: {
-                align: 'center',
-              },
-            muiTableBodyCellProps: {
-                align: 'center',
-              },
 
         },
 
@@ -196,7 +179,7 @@ const Tomador = (props: any) => {
             <div className="col-md-12" style={{ marginBottom: 20}}>
                 <div className="d-md-flex d-grid align-items-center gap-2">
                     
-                    <button type="button" className="btn btn-primary" onClick={() => {setNow(moment().format('YYYY-MM-DD HH:mm:ss'));setCliente_id(undefined);setTomador_id(undefined);setShow(true)}}>+ Novo</button>
+                    <button type="button" className="btn btn-primary" onClick={() => {setNow(moment().format('YYYY-MM-DD HH:mm:ss'));setCliente_id(clientes.length > 1 ? undefined : cliente_id);setTomador_id(undefined);setShow(true)}}>+ Novo</button>
                     <button type="button" className="btn btn-success">Exportar XLSX</button>
                 
                 </div>
@@ -206,8 +189,9 @@ const Tomador = (props: any) => {
                 <div className="row g-3">
                     <div className="col-md-12">
                         
-                        <select className="form-control" value={cliente_id} onChange={event => setCliente_id(event.target.value ? Number(event.target.value) : undefined)} >
-                            <option value="">[Selecione]</option>
+                        <select className="form-control" value={cliente_id} disabled={ clientes.length > 1 ? false : true } onChange={event => setCliente_id(event.target.value ? Number(event.target.value) : undefined)} >
+                            { clientes.length > 1 && ( <option value="">[Selecione]</option> )}
+                            
                             {
 
                                 clientes.map((rs: iClientes) => 
@@ -218,6 +202,7 @@ const Tomador = (props: any) => {
                             }
 
                         </select>
+                        
                     </div>
                     <div className="col-12 col-xl-12">
                         

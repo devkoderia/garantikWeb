@@ -60,7 +60,7 @@ const Corretor = (props: any) => {
 			var dados = JSON.parse(dadosUsuarios)
             
             setClientes(dados.clientes)
-
+            setCliente_id(dados.clientes.length == 1 ? dados.clientes[0].cliente_id : undefined)
 		    //setCliente_id(dados.cliente_id ? Number(dados.cliente_id) : undefined)
 	
 
@@ -193,7 +193,7 @@ const Corretor = (props: any) => {
             <div className="col-md-12" style={{ marginBottom: 20}}>
                 <div className="d-md-flex d-grid align-items-center gap-2">
                     
-                    <button type="button" className="btn btn-primary" onClick={() => {setNow(moment().format('YYYY-MM-DD HH:mm:ss'));setCliente_id(undefined);setCorretor_id(undefined);setShow(true)}}>+ Novo</button>
+                    <button type="button" className="btn btn-primary" onClick={() => {setNow(moment().format('YYYY-MM-DD HH:mm:ss'));setCliente_id(clientes.length > 1 ? undefined : cliente_id);setCorretor_id(undefined);setShow(true)}}>+ Novo</button>
                     <button type="button" className="btn btn-success">Exportar XLSX</button>
                 
                 </div>
@@ -203,8 +203,9 @@ const Corretor = (props: any) => {
                 <div className="row g-3">
                     <div className="col-md-12">
                         
-                        <select className="form-control" value={cliente_id} onChange={event => setCliente_id(event.target.value ? Number(event.target.value) : undefined)} >
-                            <option value="">[Selecione]</option>
+                        <select className="form-control" value={cliente_id} disabled={ clientes.length > 1 ? false : true } onChange={event => setCliente_id(event.target.value ? Number(event.target.value) : undefined)} >
+                            { clientes.length > 1 && ( <option value="">[Selecione]</option> )}
+                            
                             {
 
                                 clientes.map((rs: iClientes) => 

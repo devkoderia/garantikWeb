@@ -127,7 +127,7 @@ const Layout = () => {
             <ul className="navbar-nav align-items-center flex-grow-1">
             <li className="nav-item dropdown">
             <a className="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
-                <div className="parent-icon"><i className="material-icons-outlined">home</i>
+                <div className="parent-icon"><i className="material-icons-outlined"><span style={{ color: '#a64b66' }}>home</span></i>
                 </div>
                 <div className="menu-title d-flex align-items-center">Dashboard</div>
                 <div className="ms-auto dropy-icon"><i className='material-icons-outlined'>expand_more</i></div>
@@ -139,7 +139,7 @@ const Layout = () => {
             </li>
             <li className="nav-item dropdown">
             <a className="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
-                <div className="parent-icon"><i className='material-icons-outlined'>apps</i>
+                <div className="parent-icon"><i className='material-icons-outlined'><span style={{ color: '#916049'}}>apps</span></i>
                 </div>
                 <div className="menu-title d-flex align-items-center">Garantia</div>
                 <div className="ms-auto dropy-icon"><i className='material-icons-outlined'>expand_more</i></div>
@@ -150,7 +150,7 @@ const Layout = () => {
                 <li><a className="dropdown-item" href="/Corretor"><i className='material-icons-outlined'>folder</i>Corretor</a></li>
                 <li><a className="dropdown-item" href="/Tomador"><i className='material-icons-outlined'>source</i>Tomador</a></li>
                 <li><a className="dropdown-item" href="/Favorecido"><i className='material-icons-outlined'>backup</i>Favorecido</a></li>
-                <li><a className="dropdown-item" href="/Proposta"><i className='material-icons-outlined'>account_circle</i>Proposta</a></li>
+                <li><a className="dropdown-item" href="/Emissao"><i className='material-icons-outlined'>account_circle</i>Emissão</a></li>
                 <li><a className="dropdown-item" href="/Fianca"><i className='material-icons-outlined'>note_alt</i>Fiança</a></li>
                 
 
@@ -171,7 +171,7 @@ const Layout = () => {
             </li>
             <li className="nav-item dropdown">
             <a className="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
-                <div className="parent-icon"><i className='material-icons-outlined'>account_circle</i>
+                <div className="parent-icon"><i className='material-icons-outlined'><span style={{ color: '#44914b'}}>account_circle</span></i>
                 </div>
                 <div className="menu-title d-flex align-items-center">Relatórios</div>
                 <div className="ms-auto dropy-icon"><i className='material-icons-outlined'>expand_more</i></div>
@@ -192,17 +192,31 @@ const Layout = () => {
             </ul>
             </li>
             <li className="nav-item dropdown">
-            <a className="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
-                <div className="parent-icon"><i className='material-icons-outlined'>engineering</i>
-                </div>
-                <div className="menu-title d-flex align-items-center">Administração</div>
-                <div className="ms-auto dropy-icon"><i className='material-icons-outlined'>expand_more</i></div>
-            </a>
-            <ul className="dropdown-menu">
+                <a className="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
+                    <div className="parent-icon"><i className='material-icons-outlined'><span style={{ color: '#3b838c'}}>engineering</span></i>
+                    </div>
+                    <div className="menu-title d-flex align-items-center">Gestão</div>
+                    <div className="ms-auto dropy-icon"><i className='material-icons-outlined'>expand_more</i></div>
+                </a>
+                <ul className="dropdown-menu">
 
-                <li><a className="dropdown-item" href="/Usuarios"><i className='material-icons-outlined'>group</i>Usuários</a></li>
-                
-            </ul>
+                    <li><a className="dropdown-item" href="/Usuarios"><i className='material-icons-outlined'>group</i>Usuários</a></li>
+                    
+                </ul>
+            </li>
+
+            <li className="nav-item dropdown" >
+                <a className="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown" style={{ backgroundColor: '#efebf0'}}>
+                    <div className="parent-icon"><i className='material-icons-outlined'><span style={{ color: '#a138ba'}}>engineering</span></i>
+                    </div>
+                    <div className="menu-title d-flex align-items-center"><span style={{ color: '#003366'}}>Administração</span></div>
+                    <div className="ms-auto dropy-icon"><i className='material-icons-outlined'>expand_more</i></div>
+                </a>
+                <ul className="dropdown-menu">
+                    <li><a className="dropdown-item" href="/Adm/Clientes"><i className='material-icons-outlined'>build</i>Clientes</a></li>
+                    <li><a className="dropdown-item" href="/Adm/Usuarios"><i className='material-icons-outlined'>group</i>Usuários</a></li>
+                    
+                </ul>
             </li>
             
 

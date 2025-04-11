@@ -82,7 +82,7 @@ const FormProdutor = (props: any) => {
 
             carregaClientes()
             setUsuario_id_session(dados.usuario_id)
-
+            setCliente_id(dados.clientes.length == 1 ? dados.clientes[0].cliente_id : undefined)
             //setCliente_id(dados.cliente_id ? Number(dados.cliente_id) : undefined)
 
 
@@ -439,7 +439,7 @@ const FormProdutor = (props: any) => {
         limpa()
 
 
-        if (props.produtor_id && props.cliente_id) {
+        if (props.produtor_id != null && props.cliente_id != null) {
 
             carregaProdutor()
 
@@ -599,7 +599,7 @@ const FormProdutor = (props: any) => {
     const validaSalvar = () => {
 
 
-        if (cnpjCorrentista.toString().length > 0) {
+        if (cnpjCorrentista) {
 
             if (!validaCNPJ(cnpjCorrentista.replaceAll('.', '').replaceAll('-', '').replaceAll('/', ''))) {
 
@@ -611,7 +611,7 @@ const FormProdutor = (props: any) => {
         }
 
 
-        if (cpfCorrentista.toString().length > 0) {
+        if (cpfCorrentista) {
 
             if (!validaCPF(cpfCorrentista.replaceAll('.', '').replaceAll('-', ''))) {
 
@@ -623,7 +623,7 @@ const FormProdutor = (props: any) => {
         }
 
 
-        if (emailPessoaContato.toString().length > 0) {
+        if (emailPessoaContato) {
 
             if (!validaEmail(emailPessoaContato)) {
 
@@ -702,6 +702,7 @@ const FormProdutor = (props: any) => {
             motivoSituacao: motivoSituacao,
             situacaoEspecial: situacaoEspecial,
             dataSituacaoEspecial: dataSituacaoEspecial ? moment(dataSituacaoEspecial, 'DD/MM/YYYY').format('YYYY-MM-DD') : null,
+            
             susep: susep,
 
             ad_usr: usuario_id_session,
@@ -783,15 +784,13 @@ const FormProdutor = (props: any) => {
 
                 <div className="col-md-6">
 
-                    <select className="form-control" value={cliente_id}
-                        onChange={event => setCliente_id(event.target.value ? Number(event.target.value) : undefined)}
-                        disabled={props.corretor_id}
-                    >
-                        <option value="">[Emissor da garantia]</option>
+                    <select className="form-control" value={cliente_id} disabled={ clientes.length > 1 ? false : true } onChange={event => setCliente_id(event.target.value ? Number(event.target.value) : undefined)} >
+                        { clientes.length > 1 && ( <option value="">[Selecione]</option> )}
+                        
                         {
 
-                            clientes.map((rs: iClientes) =>
-
+                            clientes.map((rs: iClientes) => 
+                                
                                 <option value={rs.cliente_id}>{rs.cnpj} - {rs.nomeFantasia}</option>
                             )
 
@@ -803,7 +802,7 @@ const FormProdutor = (props: any) => {
 
                     <select className="form-control" value={tipoJuridico} onChange={event => setTipoJuridico(event.target.value)}
                         style={{ backgroundColor: '#f4f2ff' }}
-                        disabled={props.corretor_id}>
+                        disabled={props.produtor_id}>
                         <option value="">[Informe o tipo jurídico]</option>
                         <option value="F">Pessoa Física</option>
                         <option value="J">Pessoa Jurídica</option>
@@ -1281,11 +1280,11 @@ const FormProdutor = (props: any) => {
                 <div className="col-md-12" style={{ marginTop: 50, textAlign: 'right' }}>
 
 
-                    <button type="button" className="btn btn-secondary" onClick={() => props.setShow(false)} style={{ marginLeft: 5 }}>Fechar</button>
-                    <button type="button" className="btn btn-success" style={{ marginLeft: 5, display: validadoCPF == true || props.corretor_id || validadoCNPJ == true ? 'table-row' : 'none' }} onClick={validaSalvar}>Salvar</button>
+                        <button type="button" className="btn btn-secondary" onClick={() => props.setShow(false)} style={{ marginLeft: 5 }}>Fechar</button>
+                        <button type="button" className="btn btn-success" style={{ marginLeft: 5, display: validadoCPF == true || props.corretor_id || validadoCNPJ == true ? 'table-row' : 'none' }} onClick={validaSalvar}>Salvar</button>
 
+                    </div>
                 </div>
-            </div>
 
             <Dialog
                 open={open}

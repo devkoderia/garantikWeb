@@ -2,83 +2,66 @@ import { useState, useEffect } from 'react';
 import { MaterialReactTable, MRT_ColumnDef } from 'material-react-table';
 import { MRT_Localization_PT_BR } from 'material-react-table/locales/pt-BR';
 import LoaderIcon from 'react-loading-icons'
-import ModalUsuario from '../modals/ModalUsuario';
-import ModalConvite from '../modals/ModalConvite';
+import ModalAdmCliente from '../modals/ModalAdmCliente';
 import moment from 'moment'
 import api from '../components/api';
 
 
-const Usuarios = () => {
+
+interface iClientes {
+
+    cliente_id: number,
+    nomeFantasia: string,
+    cnpj: string,
+    totalUsuarios: number,
+    status: string,
 
 
+}
 
 
-    interface iDados {
+const AdmClientes = () => {
 
-        
-        nome: string,
-        cpf: string,
-        usuario_id: number,
-        perfilDescricao: string,        
-        
-        
+    const [cliente_id, setCliente_id] = useState<number | undefined>()
 
-    }
-
-
-    interface iClientes {
-
-        cliente_id: number,
-        nomeFantasia: string,
-        cnpj: string,
-
-
-    }
-
-
-    const [resultado, setResultado] = useState<iDados[]>([])
+    const [resultado, setResultado] = useState<iClientes[]>([])
     const [carregando, setCarregando] = useState<string>('none')
-
-    const [showConvite, setShowConvite] = useState<boolean>(false)
 
     const [show, setShow] = useState<boolean>(false)
     const [now, setNow] = useState<string | undefined>('')
-    const [nowConvite, setNowConvite] = useState<string | undefined>('')
-    
-
-    const [usuario_id, setUsuario_id] = useState<number | undefined>()
-    const [cliente_id, setCliente_id] = useState<number | undefined>()
-    
-    const [usuario_id_session, setUsuario_id_session] = useState<number | undefined>()
-
-    const [clientes, setClientes] = useState<[]>([])
 
 
-    const dadosUsuarios = sessionStorage.getItem('dadosUsuarios')
+    const carregaClientes = () => {
+
+        
+
+        api.get('clienteListaTodos').then((result) => {
+
+            //console.log(result.data)
+            setResultado(result.data)
+
+        }).catch((err) => {
+
+            console.log(err.response)
+
+        })
+
+
+    }
+
 
     useEffect(() => {
 
-		if (dadosUsuarios) {
+        carregaClientes()
 
-			var dados = JSON.parse(dadosUsuarios)
-            
-            setClientes(dados.clientes)
-            setUsuario_id_session(dados.usuario_id)
-            setCliente_id(dados.clientes.length == 1 ? dados.clientes[0].cliente_id : undefined)
-		    //setCliente_id(dados.cliente_id ? Number(dados.cliente_id) : undefined)
-	
-
-		}
-
-	}, [dadosUsuarios])
+    }, [])
 
 
 
-
-    const columns: MRT_ColumnDef<iDados>[] = [
+    const columns: MRT_ColumnDef<iClientes>[] = [
 
         {
-            accessorKey: 'nome',
+            accessorKey: 'nomeFantasia',
             header: 'Nome',
             
 
@@ -86,17 +69,35 @@ const Usuarios = () => {
 
 
         {
-            accessorKey: 'cpf',
-            header: 'CPF',
+            accessorKey: 'razaoSocial',
+            header: 'Razão Social',
+            
+
+        },
+
+
+        {
+            accessorKey: 'cnpj',
+            header: 'CNPJ',
+            
+
+        },
+
+
+        {
+            accessorKey: 'totalUsuarios',
+            header: 'Usuários',
             
 
         },
 
 
 
+
+
         {
-            accessorKey: 'perfilDescricao',
-            header: 'Perfil',
+            accessorKey: 'status',
+            header: 'Status',
             Cell: ({ renderedCellValue, row }) => (
             
                 renderedCellValue
@@ -111,59 +112,18 @@ const Usuarios = () => {
 
     ]
 
-
-    const carregaUsuarios = () => {
-
-        var dataPost = {
-
-            cliente_id: cliente_id,
-
-        }
-
-        setCarregando('block')
-
-        api.post('usuarioListaTabela', dataPost).then((result) => {
-
-            //console.log(result.data)
-            setResultado(result.data)
-
-            setCarregando('none')
-
-        }).catch((err) => {
-
-            setCarregando('none')
-            console.log(err.response)
-
-        })
-
-    }
-
-    useEffect(() => {
-
-        if (cliente_id) {
-
-            carregaUsuarios()
-
-        }
-       
-
-    }, [cliente_id])
-
-
     return (
 
         <div>
-
-
             
 
                 <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-					<div className="breadcrumb-title pe-3">Usuários</div>
+					<div className="breadcrumb-title pe-3">Clientes</div>
 					<div className="ps-3">
 						<nav aria-label="breadcrumb">
 							<ol className="breadcrumb mb-0 p-0">
 								
-								<li className="breadcrumb-item active" aria-current="page">Gestão</li>
+								<li className="breadcrumb-item active" aria-current="page">Administração</li>
 							</ol>
 						</nav>
 					</div>
@@ -171,7 +131,7 @@ const Usuarios = () => {
 				</div>
 
 
-                    
+
 
 
 
@@ -182,29 +142,12 @@ const Usuarios = () => {
                         <div className="col-md-12" style={{ marginBottom: 20}}>
                             <div className="d-md-flex d-grid align-items-center gap-2">
                                 
-                                <button type="button" className="btn btn-primary" onClick={() => {setNowConvite(moment().format('YYYYMMDDHHmmss'));setShow(false);setShowConvite(true)}}>+ Convidar usuário</button>
+                                <button type="button" className="btn btn-primary" onClick={() => {setShow(false);setCliente_id(undefined)}}>+ Novo Cliente</button>
                                 <button type="button" className="btn btn-success">Exportar XLSX</button>
                             
                             </div>
                         </div>
 
-                        <div className="col-md-12">
-                            
-                            <select className="form-control" value={cliente_id} disabled={ clientes.length > 1 ? false : true } onChange={event => setCliente_id(event.target.value ? Number(event.target.value) : undefined)} >
-                                { clientes.length > 1 && ( <option value="">[Selecione]</option> )}
-                                
-                                {
-
-                                    clientes.map((rs: iClientes) => 
-                                        
-                                        <option value={rs.cliente_id}>{rs.cnpj} - {rs.nomeFantasia}</option>
-                                    )
-
-                                }
-
-                            </select>
-
-                        </div>
 
                         <div className="col-12 col-xl-12">
                             
@@ -252,7 +195,7 @@ const Usuarios = () => {
                                             muiTableBodyRowProps={({ row }) => ({
                                                 onClick: () => {
                                                     setShow(true);
-                                                    setUsuario_id(row.original.usuario_id); 
+                                                    setCliente_id(row.original.cliente_id); 
                                                     setNow(moment().format('YYYYMMDDHHmmss'))
                                                 },
                                                 sx: {
@@ -270,9 +213,7 @@ const Usuarios = () => {
                 </div>
 
 
-            <ModalUsuario show={show} setShow={setShow} now={now} setNow={setNow} usuario_id={usuario_id} cliente_id={cliente_id} />
-            <ModalConvite showConvite={showConvite} nowConvite={nowConvite} setShowConvite={setShowConvite} clientes={clientes} usuario_id_session={usuario_id_session} />
-
+                <ModalAdmCliente show={show} setShow={setShow} now={now} setNow={setNow} cliente_id={cliente_id} />
 
         </div>
 
@@ -280,4 +221,4 @@ const Usuarios = () => {
 
 }
 
-export default Usuarios
+export default AdmClientes
