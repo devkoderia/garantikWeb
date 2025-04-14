@@ -763,11 +763,6 @@ const FormTomador = (props: any) => {
         listaMunicipios();
     }, [uf]);
 
-    useEffect(() => {
-
-        console.log(cliente_id, 'cliente_id')
-
-    }, [cliente_id])
 
 
 
