@@ -3,6 +3,7 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import api from "../components/api";
 import { Link } from 'react-router-dom'
+import toast from "react-hot-toast";
 import { useForm, Controller } from "react-hook-form";
 import moment from 'moment'
 import CurrencyInput from '../components/CurrencyInput';
@@ -31,6 +32,7 @@ interface iTomador {
     nomeFantasia: string,
     tipoJuridico: string,
     outroDocumento: string,
+    tomador: string,
 
 }
 
@@ -44,6 +46,7 @@ interface iFavorecido {
     nomeFantasia: string,
     tipoJuridico: string,
     outroDocumento: string,
+    favorecido: string,
 
 }
 
@@ -109,6 +112,14 @@ const FormEmissao = (props: any) => {
 
     const [modalidade_id, setModalidade_id] = useState<number | undefined>()
     const [modalidades, setModalidades] = useState<React.ReactNode>()
+
+    const [tomadores, setTomadores] = useState<iTomador[]>([])
+    const [tomadoresTabela, setTomadoresTabela] = useState<React.ReactNode>()
+    const [totalTomadores, setTotalTomadores] = useState<number>(0)
+
+    const [favorecidos, setFavorecidos] = useState<iFavorecido[]>([])
+    const [favorecidosTabela, setFavorecidosTabela] = useState<React.ReactNode>()
+    const [totalFavorecidos, setTotalFavorecidos] = useState<number>(0)
                 
     
     const { control, handleSubmit } = useForm({
@@ -182,6 +193,122 @@ const FormEmissao = (props: any) => {
     }, [favorecido_id])
 
 
+    const adicionaTomador = (obj: any) => {
+
+        //console.log(obj, 'obj')
+
+        if (tomadores.filter(item => item.tomador_id === obj.tomador_id).length == 0) {
+
+            setTomadores([...tomadores, obj])
+            setResultadoTomador('')
+            setTomador('')
+            
+        } else {
+
+            toast.error('Tomador já inserido na lista!')
+
+        }
+
+        
+
+    }
+
+
+    const adicionaFavorecido = (obj: any) => {
+
+        //console.log(obj, 'obj')
+
+        if (favorecidos.filter(item => item.favorecido_id === obj.favorecido_id).length == 0) {
+
+            setFavorecidos([...favorecidos, obj])
+            setResultadoFavorecido('')
+            setFavorecido('')
+            
+        } else {
+
+            toast.error('Tomador já inserido na lista!')
+
+        }
+
+        
+
+    }
+
+    const apagaTomador = (tomador_id: number) => {
+
+
+        setTomadores(tomadores.filter(item => item.tomador_id !== tomador_id));
+
+    }
+
+    useEffect(() => {
+
+        //console.log(tomadores)
+        setTomadoresTabela(tomadores.map((rs) =>
+        
+            <tr>
+                <td>
+                    {rs.tomador}
+                </td>
+                <td style={{ cursor: 'pointer'}} onClick={() => apagaTomador(rs.tomador_id) }>
+                    <span style={{ color: 'orange'}} >[Apagar]</span>
+                </td>
+            </tr>
+        
+        ))
+
+        setTotalTomadores(tomadores.length)
+
+    }, [tomadores])
+
+
+    useEffect(() => {
+
+        //console.log(tomadores)
+        setFavorecidosTabela(favorecidos.map((rs) =>
+        
+            <tr>
+                <td>
+                    {rs.favorecido}
+                </td>
+                <td style={{ cursor: 'pointer'}} onClick={() => apagaFavorecido(rs.favorecido_id) }>
+                    <span style={{ color: 'orange'}} >[Apagar]</span>
+                </td>
+            </tr>
+        
+        ))
+
+        setTotalFavorecidos(favorecidos.length)
+
+    }, [favorecidos])
+
+
+    const apagaFavorecido = (favorecido_id: number) => {
+
+
+        setFavorecidos(favorecidos.filter(item => item.favorecido_id !== favorecido_id));
+
+    }
+
+    useEffect(() => {
+
+        //console.log(tomadores)
+        setFavorecidosTabela(favorecidos.map((rs) =>
+        
+            <tr>
+                <td>
+                    {rs.favorecido}
+                </td>
+                <td style={{ cursor: 'pointer'}} onClick={() => apagaFavorecido(rs.favorecido_id) }>
+                    <span style={{ color: 'orange'}} >[Apagar]</span>
+                </td>
+            </tr>
+        
+        ))
+
+        setTotalTomadores(tomadores.length)
+
+    }, [tomadores])
 
 
     useEffect(() => {
@@ -200,7 +327,17 @@ const FormEmissao = (props: any) => {
                 //console.log(result.data)
                 setResultadoTomador(result.data.map((rs: iTomador) =>
                 
-                    <Link to='#' onClick={() => {setTomador_id(rs.tomador_id);setTomador(`${rs.tipoJuridico == 'J' ? `${rs.cnpj} - ${rs.nomeFantasia}` : rs.tipoJuridico == 'F' ? `${rs.cpf} - ${rs.nome}` : `${rs.outroDocumento} - ${rs.nome}` }`)}}><span style={{ color: 'purple' }}>[{rs.tipoJuridico == 'J' ? rs.cnpj : rs.tipoJuridico == 'F' ? rs.cpf : rs.outroDocumento }]</span> - {rs.tipoJuridico == 'J' ? rs.nomeFantasia : rs.tipoJuridico == 'F' ? rs.nome : rs.outroDocumento}&nbsp;</Link>
+                    <Link to='#' onClick={() => adicionaTomador({
+
+                                                                tomador_id: rs.tomador_id,
+                                                                tomador: `${rs.tipoJuridico == 'J' ? `${rs.cnpj} - ${rs.nomeFantasia}` : rs.tipoJuridico == 'F' ? `${rs.cpf} - ${rs.nome}` : `${rs.outroDocumento} - ${rs.nome}` }`,
+                                                                cnpj: rs.cnpj,
+                                                                tipoJuridico: rs.tipoJuridico,
+                                                                cpf: rs.cpf,
+
+
+                                    })}><span style={{ color: 'purple' }}>[{rs.tipoJuridico == 'J' ? rs.cnpj : rs.tipoJuridico == 'F' ? rs.cpf : rs.outroDocumento }]</span> - {rs.tipoJuridico == 'J' ? rs.nomeFantasia : rs.tipoJuridico == 'F' ? rs.nome : rs.outroDocumento}&nbsp;</Link>
+
                 
                 ))
 
@@ -215,6 +352,9 @@ const FormEmissao = (props: any) => {
 
 
     }, [tomador])
+
+
+
 
 
 
@@ -234,7 +374,17 @@ const FormEmissao = (props: any) => {
                 //console.log(result.data)
                 setResultadoFavorecido(result.data.map((rs: iFavorecido) =>
                 
-                    <Link to='#' onClick={() => {setFavorecido_id(rs.favorecido_id);setFavorecido(`${rs.tipoJuridico == 'J' ? `${rs.cnpj} - ${rs.nomeFantasia}` : rs.tipoJuridico == 'F' ? `${rs.cpf} - ${rs.nome}` : `${rs.outroDocumento} - ${rs.nome}` }`)}}><span style={{ color: 'purple' }}>[{rs.tipoJuridico == 'J' ? rs.cnpj : rs.tipoJuridico == 'F' ? rs.cpf : rs.outroDocumento }]</span> - {rs.tipoJuridico == 'J' ? rs.nomeFantasia : rs.tipoJuridico == 'F' ? rs.nome : rs.outroDocumento}&nbsp;</Link>
+                    <Link to='#' onClick={() => adicionaFavorecido({
+
+                                                                favorecido_id: rs.favorecido_id,
+                                                                favorecido: `${rs.tipoJuridico == 'J' ? `${rs.cnpj} - ${rs.nomeFantasia}` : rs.tipoJuridico == 'F' ? `${rs.cpf} - ${rs.nome}` : `${rs.outroDocumento} - ${rs.nome}` }`,
+                                                                cnpj: rs.cnpj,
+                                                                tipoJuridico: rs.tipoJuridico,
+                                                                cpf: rs.cpf,
+
+
+                                    })}><span style={{ color: 'purple' }}>[{rs.tipoJuridico == 'J' ? rs.cnpj : rs.tipoJuridico == 'F' ? rs.cpf : rs.outroDocumento }]</span> - {rs.tipoJuridico == 'J' ? rs.nomeFantasia : rs.tipoJuridico == 'F' ? rs.nome : rs.outroDocumento}&nbsp;</Link>
+
                 
                 ))
 
@@ -359,7 +509,7 @@ const FormEmissao = (props: any) => {
                                         <div className="dropdown-item d-flex align-items-center gap-2 py-2">
                                             <i
                                                 className="material-icons-outlined">group</i>
-                                                Tomador e Favorecido
+                                                Tomador ({totalTomadores})
                                         
                                         </div>
                                         </>
@@ -368,23 +518,115 @@ const FormEmissao = (props: any) => {
 
 
                                         <form className="row g-3">
+                                           
                                             <div className="col-md-12">
-
-                                    
-
-                                            </div>
-                                            <div className="col-md-12">
-                                                <label className="form-label">Tomador</label>
-                                                <input type="text" className="form-control" style={{ backgroundColor: colorTomador }} value={tomador} onChange={event => setTomador(event.target.value)} onFocus={() => {setTomador('');setTomador_id(undefined)}}/>
+                                                
+                                                <input type="text" 
+                                                className="form-control" 
+                                                style={{ backgroundColor: colorTomador }} 
+                                                value={tomador} 
+                                                onChange={event => setTomador(event.target.value)} onFocus={() => {setTomador('');setResultadoTomador('');setTomador_id(undefined)}}
+                                                placeholder="Busque o tomador para vinculação"
+                                                />
                                                 {resultadoTomador}
                                             </div>
+                                            <div className="col-md-12">
+                                                <fieldset className="form-group">
+                                                    
+
+                                                    <table className="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                            <th style={{ textAlign: 'left', backgroundColor: '#EFEFEF'}}>
+                                                                
+                                                                
+
+                                                            </th>
+                                                            
+                                                            <th style={{ fontSize: '11px', backgroundColor: '#EFEFEF', textAlign: 'right'}}>
+                                                                
+                                                                &nbsp;
+
+                                                            </th>
+                                                            
+                                                        </tr>
+                                                                
+                                                        </thead>
+                                                        <tbody>
+
+                                                            {tomadoresTabela}
+                                                            
+                                                        </tbody>
+                                                    
+                                                    </table>
+                                            
+                                                        
+                                                    
+                                                </fieldset>
+                                            </div>
+                                        
+
+                                            
+                                        </form>
+
+
+
+                                    </Tab>
+                                    <Tab eventKey="dadosFavorecido" title={
+                                        <>
+                                        <div className="dropdown-item d-flex align-items-center gap-2 py-2">
+                                            <i
+                                                className="material-icons-outlined">group</i>
+                                                Favorecido ({totalFavorecidos})
+                                        
+                                        </div>
+                                        </>
+                                    }>
+                                        
+
+
+                                        <form className="row g-3">
+                                           
                                             <div className="col-md-12">
                                                 <label className="form-label">Favorecido</label>
                                                 <input type="text" className="form-control" style={{ backgroundColor: colorFavorecido }} value={favorecido} onChange={event => setFavorecido(event.target.value)} onFocus={() => {setFavorecido('');setFavorecido_id(undefined)}} />
                                                 {resultadoFavorecido}
                                             </div>
                                             
+                                            <div className="col-md-12">
+                                                <fieldset className="form-group">
+                                                    
 
+                                                    <table className="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                            <th style={{ textAlign: 'left', backgroundColor: '#EFEFEF'}}>
+                                                                
+                                                                
+
+                                                            </th>
+                                                            
+                                                            <th style={{ fontSize: '11px', backgroundColor: '#EFEFEF', textAlign: 'right'}}>
+                                                                
+                                                                &nbsp;
+
+                                                            </th>
+                                                            
+                                                        </tr>
+                                                                
+                                                        </thead>
+                                                        <tbody>
+
+                                                            {favorecidosTabela}
+                                                            
+                                                        </tbody>
+                                                    
+                                                    </table>
+                                            
+                                                        
+                                                    
+                                                </fieldset>
+                                            </div>
                                         
 
                                             
