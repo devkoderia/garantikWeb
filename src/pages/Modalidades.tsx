@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import Badge from 'react-bootstrap/Badge';
 
-import ModalEmissao from "../modals/ModalEmissao"
+import ModalModalidade from "../modals/ModalModalidade"
 import moment from 'moment'
 
 import { MaterialReactTable, MRT_ColumnDef } from 'material-react-table';
@@ -9,39 +9,34 @@ import { MRT_Localization_PT_BR } from 'material-react-table/locales/pt-BR';
 import LoaderIcon from 'react-loading-icons'
 import api from "../components/api";
 
-const Produtor = (props: any) => {
+
+
+interface iDados {
+
+    modalidade_id: number,
+    cliente_id: number,
+    descricao: string,
+    status: string,
+
+    
+
+}
+
+interface iClientes {
+
+    cliente_id: number,
+    nomeFantasia: string,
+    cnpj: string,
+
+
+}
+
+
+const Corretor = (props: any) => {
 
     const [show, setShow] = useState<boolean>(false)
     const [now, setNow] = useState<string | undefined>('')
 
-
-
-    interface iDados {
-
-        emissao_id: number,
-        cliente_id: number,
-        nome: string,
-        cpf: string,
-        valortotal: string,
-        situacao: string,        
-        nomeFantasia: string,
-        quantidade: string,
-        tipoJuridico: string,
-        cnpj: string,
-        razaoSocial: string,
-        
-        
-
-    }
-
-    interface iClientes {
-
-        cliente_id: number,
-        nomeFantasia: string,
-        cnpj: string,
-
-
-    }
 
 
     const [resultado, setResultado] = useState<iDados[]>([])
@@ -49,9 +44,10 @@ const Produtor = (props: any) => {
 
     const [cliente_id, setCliente_id] = useState<number | undefined>()
     const [clientes, setClientes] = useState<[]>([])
-    const [emissao_id, setEmissao_id] = useState<number | undefined>()
-    
+    const [modalidade_id, setModalidade_id] = useState<number | undefined>()
+
     const dadosUsuarios = sessionStorage.getItem('dadosUsuarios')
+    const [clienteModal_id, setClienteModal_id] = useState<number | undefined>()
 
     useEffect(() => {
 
@@ -70,7 +66,7 @@ const Produtor = (props: any) => {
 
 
 
-    const carregaEmissoes = () => {
+    const carregaModalidades = () => {
 
 
         var dataPost = {
@@ -81,24 +77,11 @@ const Produtor = (props: any) => {
 
         setCarregando('block')
 
-        api.post('emissaoListaTodos', dataPost).then((result) => {
+        api.post('modalidadeListaTodos', dataPost).then((result) => {
 
-            //console.log(result.data)
+            console.log(result.data)
 
-            setResultado(result.data.map((rs: iDados) => {
-
-                return {
-
-                    emissao_id: rs.emissao_id,
-                    nome: rs.tipoJuridico == 'F' ? rs.nome : rs.razaoSocial,
-                    cpf: rs.tipoJuridico == 'F' ? rs.cpf : rs.cnpj,
-                    tipoJuridico: rs.tipoJuridico,
-                    
-
-                }
-
-
-            }))
+            setResultado(result.data) 
             setCarregando('none')
 
         }).catch((err) => {
@@ -116,7 +99,7 @@ const Produtor = (props: any) => {
 
         if (cliente_id) {
 
-            carregaEmissoes()
+            carregaModalidades()
 
         }
 
@@ -124,34 +107,35 @@ const Produtor = (props: any) => {
 
     const columns: MRT_ColumnDef<iDados>[] = [
 
+
         {
-            accessorKey: 'tipoJuridico',
-            header: 'Tipo',
+            accessorKey: 'descricao',
+            header: 'Descrição',
+            muiTableHeadCellProps: {
+                align: 'left',
+              },
+            muiTableBodyCellProps: {
+                align: 'left',
+              },
+
+        },
+
+        {
+            accessorKey: 'status',
+            header: 'Status',
             Cell: ({ renderedCellValue, row }) => (
             
-                <Badge style={{ fontSize: '0.7rem' }} bg={ renderedCellValue == 'J' ? 'info' : 'primary'}>{renderedCellValue == 'J' ? 'Pessoa Jurídica' : 'Pessoa Física'}</Badge>
+                <Badge style={{ fontSize: '0.7rem' }} bg={ renderedCellValue == 'A' ? 'success' : 'danger'}>{renderedCellValue == 'A' ? 'Ativo' : 'Inativo'}</Badge>
            
             ),
+            muiTableHeadCellProps: {
+                align: 'center',
+              },
+            muiTableBodyCellProps: {
+                align: 'center',
+              },
 
         },
-
-        {
-            accessorKey: 'nome',
-            header: 'Nome/Razão Social',
-            
-
-        },
-
-
-        {
-            accessorKey: 'cpf',
-            header: 'CPF/CNPJ',
-            
-
-        },
-
-
-
 
 
     ]
@@ -162,12 +146,12 @@ const Produtor = (props: any) => {
 
 
             <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-					<div className="breadcrumb-title pe-3">Garantia</div>
+					<div className="breadcrumb-title pe-3">Gestão</div>
 					<div className="ps-3">
 						<nav aria-label="breadcrumb">
 							<ol className="breadcrumb mb-0 p-0">
 								
-								<li className="breadcrumb-item active" aria-current="page">Emissão</li>
+								<li className="breadcrumb-item active" aria-current="page">Modalidades</li>
 							</ol>
 						</nav>
 					</div>
@@ -177,7 +161,7 @@ const Produtor = (props: any) => {
             <div className="col-md-12" style={{ marginBottom: 20}}>
                 <div className="d-md-flex d-grid align-items-center gap-2">
                     
-                    <button type="button" className="btn btn-primary" onClick={() => {setNow(moment().format('YYYY-MM-DD HH:mm:ss'));setCliente_id(undefined);setEmissao_id(undefined);setShow(true)}}>+ Novo</button>
+                    <button type="button" className="btn btn-primary" onClick={() => {setNow(moment().format('YYYY-MM-DD HH:mm:ss'));setCliente_id(clientes.length > 1 ? undefined : cliente_id);setModalidade_id(undefined);setShow(true)}}>+ Novo</button>
                     <button type="button" className="btn btn-success" disabled>Exportar XLSX</button>
                 
                 </div>
@@ -246,7 +230,8 @@ const Produtor = (props: any) => {
                                         muiTableBodyRowProps={({ row }) => ({
                                             onClick: () => {
                                                 setShow(true);
-                                                setEmissao_id(row.original.emissao_id)
+                                                setModalidade_id(row.original.modalidade_id)
+                                                setClienteModal_id(row.original.cliente_id)
                                                 setNow(moment().format('YYYYMMDDHHmmss'))
                                             },
                                             sx: {
@@ -263,7 +248,7 @@ const Produtor = (props: any) => {
                     </div>
             </div>
             
-            <ModalEmissao emissao_id={emissao_id} cliente_id={cliente_id} show={show} setShow={setShow} now={now} setNow={setNow} carregaEmissoes={carregaEmissoes}/>
+            <ModalModalidade modalidade_id={modalidade_id} cliente_id={clienteModal_id} show={show} setShow={setShow} now={now} setNow={setNow} carregaModalidades={carregaModalidades}/>
 
         </div>
 
@@ -272,4 +257,4 @@ const Produtor = (props: any) => {
 
 }
 
-export default Produtor
+export default Corretor

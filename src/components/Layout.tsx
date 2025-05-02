@@ -201,6 +201,7 @@ const Layout = () => {
                 <ul className="dropdown-menu">
 
                     <li><a className="dropdown-item" href="/Usuarios"><i className='material-icons-outlined'>group</i>Usuários</a></li>
+                    <li><a className="dropdown-item" href="/Modalidades"><i className='material-icons-outlined'>build</i>Modalidades</a></li>
                     
                 </ul>
             </li>

@@ -178,7 +178,7 @@ const Produtor = (props: any) => {
                 <div className="d-md-flex d-grid align-items-center gap-2">
                     
                     <button type="button" className="btn btn-primary" onClick={() => {setNow(moment().format('YYYY-MM-DD HH:mm:ss'));setCliente_id(clientes.length > 1 ? undefined : cliente_id);setProdutor_id(undefined);setShow(true)}}>+ Novo</button>
-                    <button type="button" className="btn btn-success">Exportar XLSX</button>
+                    <button type="button" className="btn btn-success" disabled>Exportar XLSX</button>
                 
                 </div>
             </div>

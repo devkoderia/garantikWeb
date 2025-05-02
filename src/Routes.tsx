@@ -16,6 +16,7 @@ import Corretor from './pages/Corretor'
 import Produtor from './pages/Produtor'
 import Tomador from './pages/Tomador'
 import Favorecido from './pages/Favorecido'
+import Modalidades from './pages/Modalidades'
 
 import AdmUsuarios from './pages/AdmUsuarios'
 import AdmClientes from './pages/AdmClientes'
@@ -38,9 +39,9 @@ const Rotas = () => {
                         <Route path='/Produtor' element={<Produtor />} />
                         <Route path='/Corretor' element={<Corretor/>} />
                         <Route path='/Tomador' element={<Tomador />} />
-                        <Route path='/Favorecido' element={<Favorecido />} />
-                        
+                        <Route path='/Favorecido' element={<Favorecido />} />                        
                         <Route path='/Emissao' element={<Emissao />} />
+                        <Route path='/Modalidades' element={<Modalidades />} />
 
                         <Route path='/Usuarios' element={<Usuarios />} />
 

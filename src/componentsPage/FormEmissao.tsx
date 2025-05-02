@@ -4,6 +4,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import api from "../components/api";
 import { Link } from 'react-router-dom'
 import toast from "react-hot-toast";
+import Badge from 'react-bootstrap/Badge';
 import { useForm, Controller } from "react-hook-form";
 import moment from 'moment'
 import CurrencyInput from '../components/CurrencyInput';
@@ -12,6 +13,8 @@ import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css";
 
 import { ptBR } from "date-fns/locale";
+
+import JoditEditorComponent from "../components/JoditEditorComponent";
 
 
 interface iClientes {
@@ -60,6 +63,7 @@ interface iModalidades {
 
 const FormEmissao = (props: any) => {
 
+
     const [key, setKey] = useState<string | null>('dadosGerais');
     const [usuario_id_session, setUsuario_id_session] = useState<number | undefined>()
     const [cliente_id, setCliente_id] = useState<number>()    
@@ -82,7 +86,7 @@ const FormEmissao = (props: any) => {
     const [startDate2, setDate2] = useState(new Date());
 
     const [dias, setDias] = useState<number | undefined>()
-    const [dataVencimento, setDataVencimento] = useState<string | undefined>('')
+    const [dataVencimento, setDataVencimento] = useState(new Date());
 
     
     
@@ -92,6 +96,9 @@ const FormEmissao = (props: any) => {
     const [dataVencimentoIndeterminado, setDataVencimentoIndeterminado] = useState<string>('')
     const [moeda_id, setMoeda_id] = useState<number | undefined>()
     const [valor, setValor] = useState<string | undefined>('')
+    const [valorPremio, setValorPremio] = useState<string | undefined>('')
+    const [valorComissao, setValorComissao] = useState<string | undefined>('')
+    const [valorSpread, setValorSpread] = useState<string | undefined>('')
     const [objeto, setObjeto] = useState<string>('')
     
     const [modalidadeTexto, setModalidadeTexto] = useState<string>('')
@@ -120,11 +127,15 @@ const FormEmissao = (props: any) => {
     const [favorecidos, setFavorecidos] = useState<iFavorecido[]>([])
     const [favorecidosTabela, setFavorecidosTabela] = useState<React.ReactNode>()
     const [totalFavorecidos, setTotalFavorecidos] = useState<number>(0)
-                
+    const [observacoesCorretor, setObservacoesCorretor] = useState<string>('')
+    const [observacoesSubscritor, setObservacoesSubscritor] = useState<string>('')
     
     const { control, handleSubmit } = useForm({
         defaultValues: {
           valor: "",
+          valorPremio: "",
+          valorComissao: "",
+          valorSpread: "",
         },
       });
 
@@ -139,6 +150,10 @@ const FormEmissao = (props: any) => {
 
     const selectDateHandler2 = (d: any) => {
         setDate2(d)
+    }
+
+    const selectDateHandlerVencimento = (d: any) => {
+        setDataVencimento(d)
     }
 
     useEffect(() => {
@@ -455,18 +470,27 @@ const FormEmissao = (props: any) => {
 
     const calculaDataVigencia = () => {
         if (startDate2 && dias) {
-          const dataFormatada = moment(startDate2)
-            .add(dias, 'days')
-            .format('DD/MM/YYYY');
+            const novaData = moment(startDate2).add(dias, 'days').toDate();
+            setDataVencimento(novaData);
+            return novaData;
+          }
+        
+          return null;
+      };
+
+      const calculaDiasDeVigencia = () => {
+        if (startDate2 && dataVencimento) {
+          const inicio = moment(startDate2).startOf('day');
+          const fim = moment(dataVencimento).startOf('day');
       
-          setDataVencimento(dataFormatada);
-          return dataFormatada;
+          const diferencaDias = fim.diff(inicio, 'days');
+      
+          setDias(diferencaDias);
+          return diferencaDias;
         }
       
         return null;
       };
-
-
     const validaSalvar = () => {
 
 
@@ -509,7 +533,8 @@ const FormEmissao = (props: any) => {
                                         <div className="dropdown-item d-flex align-items-center gap-2 py-2">
                                             <i
                                                 className="material-icons-outlined">group</i>
-                                                Tomador ({totalTomadores})
+                                                Tomador 
+                                                <Badge style={{ fontSize: '0.7rem' }} bg='info'>{totalTomadores}</Badge>
                                         
                                         </div>
                                         </>
@@ -577,7 +602,8 @@ const FormEmissao = (props: any) => {
                                         <div className="dropdown-item d-flex align-items-center gap-2 py-2">
                                             <i
                                                 className="material-icons-outlined">group</i>
-                                                Favorecido ({totalFavorecidos})
+                                                Favorecido 
+                                                <Badge style={{ fontSize: '0.7rem' }} bg='primary'>{totalFavorecidos}</Badge>
                                         
                                         </div>
                                         </>
@@ -705,7 +731,22 @@ const FormEmissao = (props: any) => {
 
                                             <div className="col-md-2">
                                                 <label  className="form-label">Final da vigência</label>
-                                                <input type="text" className="form-control" disabled value={dataVencimento} />
+                                                <DatePicker
+                                                    className="form-control" 
+                                                    locale={ptBR} 
+                                                    
+                                                    wrapperClassName="w-100"
+                                                    dateFormat="dd/MM/yyyy"                                                     
+                                                    selected={dataVencimento}
+                                                    onChange={selectDateHandlerVencimento} 
+                                                    minDate={today}
+                                                    onBlur={calculaDiasDeVigencia}
+                                                    customInput={
+
+                                                        <TextInput placeholder="DD/MM/AAAA" maskType="date" className="form-control"  />
+									
+                                                    }
+                                                    />
                                             </div>
                                             <div className="col-md-4">
                                                 <label  className="form-label">Valor segurado</label>
@@ -776,7 +817,20 @@ const FormEmissao = (props: any) => {
                                     
                                             <div className="col-md-3">
                                                 <label  className="form-label">Valor do prêmio</label>
-                                                <input type="text" className="form-control" />
+                                                <Controller
+                                                    name="valorPremio"
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                    <CurrencyInput
+                                                        value={valorPremio}
+                                                        onValueChange={(value) => field.onChange(value)} // Atualiza corretamente no RHF
+                                                        onChange={event => setValorPremio(event.target.value)}
+                                                        placeholder="Digite um valor"
+                                                        className="form-control"
+                                                        
+                                                    />
+                                                    )}
+                                                />
                                             </div>
                                             <div className="col-md-3">
                                                 <label  className="form-label">Taxa aplicada (%)</label>
@@ -785,16 +839,42 @@ const FormEmissao = (props: any) => {
                                             
                                             <div className="col-md-3">
                                                 <label  className="form-label">Valor da comissão</label>
-                                                <input type="text" className="form-control" />
+                                                <Controller
+                                                    name="valorComissao"
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                    <CurrencyInput
+                                                        value={valorComissao}
+                                                        onValueChange={(value) => field.onChange(value)} // Atualiza corretamente no RHF
+                                                        onChange={event => setValorComissao(event.target.value)}
+                                                        placeholder="Digite um valor"
+                                                        className="form-control"
+                                                        
+                                                    />
+                                                    )}
+                                                />
                                             </div>
 
                                             <div className="col-md-3">
                                                 <label  className="form-label">% de comissão</label>
-                                                <input type="text" className="form-control" />
+                                                <input type="number" className="form-control" />
                                             </div>
                                             <div className="col-md-3">
                                                 <label  className="form-label">Valor do spread</label>
-                                                <input type="text" className="form-control" />
+                                                <Controller
+                                                    name="valorSpread"
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                    <CurrencyInput
+                                                        value={valorSpread}
+                                                        onValueChange={(value) => field.onChange(value)} // Atualiza corretamente no RHF
+                                                        onChange={event => setValorSpread(event.target.value)}
+                                                        placeholder="Digite um valor"
+                                                        className="form-control"
+                                                        
+                                                    />
+                                                    )}
+                                                />
                                             </div>
 
 
@@ -816,11 +896,19 @@ const FormEmissao = (props: any) => {
                                     
                                             <div className="col-md-12">
                                                 <label  className="form-label">Observações do corretor</label>
-                                                <textarea rows={3} className="form-control" />
+                                                <JoditEditorComponent
+                                                key="editor-corretor"
+                                                    //initialValue="<p>Olá mundo!</p>"
+                                                    onChange={(value) => setObservacoesCorretor(value)}
+                                                />
                                             </div>
                                             <div className="col-md-12">
                                                 <label  className="form-label">Observações do subscritor</label>
-                                                <textarea rows={3} className="form-control" />
+                                                <JoditEditorComponent
+                                                key="editor-subscritor"
+                                                    //initialValue="<p>Olá mundo!</p>"
+                                                    onChange={(value) => setObservacoesSubscritor(value)}
+                                                />
                                             </div>
 
 
