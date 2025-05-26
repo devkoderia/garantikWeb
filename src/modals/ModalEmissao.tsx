@@ -52,7 +52,7 @@ const ModalEmissao = (props: any) => {
 
                             
                     
-                    <FormEmissao cliente_id={props.cliente_id} corretor_id={props.corretor_id} setShow={props.setShow} now={props.now} carregaEmissoes={props.carregaEmissoes} />
+                    <FormEmissao cliente_id={props.cliente_id} emissao_id={props.emissao_id} corretor_id={props.corretor_id} setShow={props.setShow} now={props.now} carregaEmissoes={props.carregaEmissoes} />
                      
                     
                             

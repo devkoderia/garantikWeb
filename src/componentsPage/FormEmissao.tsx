@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef, ReactElement } from "react";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import api from "../components/api";
@@ -17,12 +17,35 @@ import { ptBR } from "date-fns/locale";
 import JoditEditorComponent from "../components/JoditEditorComponent";
 
 
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
+import Slide from "@mui/material/Slide";
+import { TransitionProps } from "@mui/material/transitions";
+
+const Transition = forwardRef(function Transition(
+    props: TransitionProps & { children: ReactElement<any, any> },
+    ref
+) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
+
 interface iClientes {
 
     cliente_id: number,
     nomeFantasia: string,
     cnpj: string,
 
+
+}
+
+interface iMoedas {
+
+    moeda_id: number,
+    descricao: string,
 
 }
 
@@ -88,15 +111,16 @@ const FormEmissao = (props: any) => {
     const [dias, setDias] = useState<number | undefined>()
     const [dataVencimento, setDataVencimento] = useState(new Date());
 
-    
+    const [moedas, setMoedas] = useState<iMoedas[]>([])
+    const [moeda_id, setMoeda_id] = useState<number | undefined>()
     
     const [dataEmissao, setDataEmissao] = useState<string>('')
     const [dataInicio, setDataInicio] = useState<string>('')    
     
     const [dataVencimentoIndeterminado, setDataVencimentoIndeterminado] = useState<string>('')
-    const [moeda_id, setMoeda_id] = useState<number | undefined>()
+    
     const [valor, setValor] = useState<string | undefined>('')
-    const [valorPremio, setValorPremio] = useState<string | undefined>('')
+    //const [premio, setValorPremio] = useState<string | undefined>('')
     const [valorComissao, setValorComissao] = useState<string | undefined>('')
     const [valorSpread, setValorSpread] = useState<string | undefined>('')
     const [objeto, setObjeto] = useState<string>('')
@@ -108,14 +132,22 @@ const FormEmissao = (props: any) => {
     const [valorPago, setValorPago] = useState<string>('')
     const [minuta, setMinuta] = useState<string>('')
     const [garantia, setGarantia] = useState<string>('')
-    const [trabalhista, setTrabalhista] = useState<string>('')
-    const [fiscal, setFiscal] = useState<string>('')
-    const [textoTrabalhista, setTextoTrabalhista] = useState<string>('')
+    
+    const [multa, setMulta] = useState<string>('')
+    const [textoMulta, setTextoMulta] = useState<string>('')
+
+    const [juros, setJuros] = useState<string>('')
+
     const [textoFiscal, setTextoFiscal] = useState<string>('')
+    const [fiscal, setFiscal] = useState<string>('')
+    const [trabalhista, setTrabalhista] = useState<string>('')    
+    const [textoTrabalhista, setTextoTrabalhista] = useState<string>('')
+    
     const [sinistro, setSinistro] = useState<string>('')
     const [bloqueada, setBloqueada] = useState<string>('')
     //const [ad_usr, setAd_usr] = useState<string>('')
 
+    const [percentualComissao, setPercentualComissao] = useState<number | undefined>()
 
     const [modalidade_id, setModalidade_id] = useState<number | undefined>()
     const [modalidades, setModalidades] = useState<React.ReactNode>()
@@ -129,13 +161,21 @@ const FormEmissao = (props: any) => {
     const [totalFavorecidos, setTotalFavorecidos] = useState<number>(0)
     const [observacoesCorretor, setObservacoesCorretor] = useState<string>('')
     const [observacoesSubscritor, setObservacoesSubscritor] = useState<string>('')
+
+    const [open, setOpen] = useState<boolean>(false)
+    const [acao, setAcao] = useState<string | undefined>('')
+    const [titulo, setTitulo] = useState<string | undefined>('')
+    const [frase, setFrase] = useState<string | undefined>('')
+
     
     const { control, handleSubmit } = useForm({
         defaultValues: {
           valor: "",
-          valorPremio: "",
+          premio: "",
           valorComissao: "",
           valorSpread: "",
+          valorPago: "",
+          percentualComissao: "",
         },
       });
 
@@ -172,7 +212,46 @@ const FormEmissao = (props: any) => {
 
 	}, [dadosUsuarios])
 
+    const carregaEmissao = () => {
+
+
+        api.get(`emissaoListaUm/${props.emissao_id}`).then((result) => {
+
+            console.log(result.data, 'aqui')
+        		
+        }).catch((err) => {
+            console.log(err.response)
+        })
+
+    }
+
+    useEffect(() => {
+
+        if (props.emissao_id) {
+
+            carregaEmissao()
+
+        }
+
+    }, [props.emissao_id])
+
+
+    const carregaMoedas = () => {
+
+        api.get('moeda').then((result) => {
+
+            setMoedas(result.data)
+        }).catch((err) => {
+            console.log(err.response)
+        })
+
+    }
     
+    useEffect(() => {
+
+        carregaMoedas()
+
+    }, [])
 
 
     useEffect(() => {
@@ -491,10 +570,154 @@ const FormEmissao = (props: any) => {
       
         return null;
       };
+
+
     const validaSalvar = () => {
+
+        if (tomadores.length == 0) {
+        	
+            toast.error('Informe o tomador!')
+            return false
+
+        }
+
+        if (favorecidos.length == 0) {
+
+            toast.error('Informe o favorecido!')
+            return false
+        }
+
+
+        setTitulo('Confirmação')
+        setFrase('Confirma salvar?')
+        setAcao('salvar')
+        setOpen(true)
 
 
     }
+
+
+
+    const salva = () => {
+    		
+        setOpen(false)
+
+        var dataPost = {
+
+            cliente_id: cliente_id,
+            dataEmissao: moment(startDate).format('YYYY-MM-DD'),
+            dataInicio: moment(startDate2).format('YYYY-MM-DD'),
+            dataVencimento: moment(dataVencimento).format('YYYY-MM-DD'),
+            dias: dias,
+            dataVencimentoIndeterminado: dataVencimentoIndeterminado == '1' ? true : dataVencimentoIndeterminado == '0' ? false : null,
+            moeda_id: moeda_id,
+            valor: valor ? Number(valor.replaceAll('.', '').replaceAll(',', '.')) : null,
+            objeto: objeto,
+            modalidade_id: modalidade_id,
+            modalidadeTexto: modalidadeTexto,
+            taxa: taxa,
+            premio: premio ? Number(premio.replaceAll('.', '').replaceAll(',', '.')) : null,
+            pago: pago == '1' ? true : pago == '0'? false : null,
+            valorPago:  valorPago ? Number(valorPago.replaceAll('.', '').replaceAll(',', '.')) : null,
+            //minuta: minuta,
+            //garantia: garantia,
+            trabalhista: trabalhista == '1' ? true : trabalhista == '0' ? false : null,
+            fiscal: fiscal == '1'? true : fiscal == '0' ? false : null,
+            textoTrabalhista: textoTrabalhista,
+            textoFiscal: textoFiscal,
+            
+            multa: multa == '1' ? true : multa == '0'? false : null,
+            textoMulta: textoMulta,
+            ad_usr: usuario_id_session,
+            observacoesCorretor: observacoesCorretor,
+            observacoesSubscritor: observacoesSubscritor,
+            valorComissao: valorComissao ? Number(valorComissao.replaceAll('.', '').replaceAll(',', '.')) : null,
+            percentualComissao: percentualComissao,
+            valorSpread: valorSpread ? Number(valorSpread.replaceAll('.', '').replaceAll(',', '.')) : null,
+            favorecidos: favorecidos.map((rs: iFavorecido) => rs.favorecido_id),
+            tomadores: tomadores.map((rs: iTomador) => rs.tomador_id),
+
+            /*
+            cliente_id: Joi.number().integer().required(),
+            dataEmissao: Joi.date().required(),
+            dataInicio: Joi.date().required(),
+            dataVencimento: Joi.date().allow(null, ''),
+            dias: Joi.number().integer().allow(null, ''),
+            dataVencimentoIndeterminado: Joi.boolean().allow(null),
+            moeda_id: Joi.number().integer().required(),
+            valor: Joi.number().required(),
+            objeto: Joi.string().required(),
+            modalidade_id: Joi.number().required(),
+            modalidadeTexto: Joi.string().required(),
+            taxa: Joi.number().allow(null),
+            premio: Joi.number().allow(null),
+            pago: Joi.boolean().allow(null),
+            valorPago: Joi.number().allow(null),
+            minuta: Joi.boolean().allow(null),
+            garantia: Joi.boolean().allow(null),
+            trabalhista: Joi.boolean().allow(null),
+            fiscal: Joi.boolean().allow(null),
+            textoTrabalhista: Joi.string().allow(null, ''),
+            textoFiscal: Joi.string().allow(null, ''),
+            ad_usr: Joi.number().integer().required(),
+            observacoesCorretor: Joi.string().allow(null, ''),
+            observacoesSubscritor: Joi.string().allow(null, ''),
+            valorComissao: Joi.number().allow(null),
+            percentualComissao: Joi.number().allow(null),
+            valorSpread: Joi.number().allow(null),
+            favorecidos: Joi.array().items(Joi.number().integer()).min(1).required(),
+            tomadores: Joi.array().items(Joi.number().integer()).min(1).required(),
+            */
+
+
+        }
+
+        console.log(dataPost)
+        //return false
+
+        api.post('emissao', dataPost).then((result) => {
+
+
+            console.log(result.data)
+            toast.success('Salvo com sucesso!')
+            setOpen(false)
+            props.setShow(false)
+            props.carregaEmissoes()
+        
+        }).catch((err) => {
+            console.log(err.response)
+            toast.error('Erro ao salvar!')
+        })
+
+    }
+
+    const carregaTextoModalidade = () => {
+
+        var dataPost = {
+        	cliente_id: cliente_id,
+        }
+    		
+        api.post(`modalidadeListaUm/${modalidade_id}`, dataPost).then((result) => {
+        	
+            setModalidadeTexto(result.data[0].texto)
+
+        }).catch((err) => {
+
+            console.log(err.response)
+
+        })
+
+    }
+
+    useEffect(() => {
+
+        if (modalidade_id && cliente_id) {
+
+            carregaTextoModalidade()
+            
+        }
+
+    }, [modalidade_id, cliente_id])
 
     return (
 
@@ -713,8 +936,24 @@ const FormEmissao = (props: any) => {
                                                     }
                                                     />
                                             </div>
+
+                                            <div className="col-md-4">
+                                                <label  className="form-label">Vencimento indeterminado?</label>
+                                                <select className="form-control"
+
+                                                    value={dataVencimentoIndeterminado}
+                                                    onChange={event => setDataVencimentoIndeterminado(event.target.value)}
+                                                
+                                                    >
+
+                                                    <option value="">[Selecione]</option>
+                                                    <option value="1">Sim</option>
+                                                    <option value="0">Não</option>
+
+                                                </select>
+                                            </div>
                                             
-                                            <div className="col-md-2">
+                                            <div className="col-md-2" style={{ display: dataVencimentoIndeterminado == '1' ? 'none' : 'table-row' }}>
                                                 <label  className="form-label">Dias</label>
                                                 <input type="text" className="form-control"
                                                 value={dias}
@@ -729,7 +968,7 @@ const FormEmissao = (props: any) => {
                                                  />
                                             </div>
 
-                                            <div className="col-md-2">
+                                            <div className="col-md-2"  style={{ display: dataVencimentoIndeterminado == '1' ? 'none' : 'table-row' }}>
                                                 <label  className="form-label">Final da vigência</label>
                                                 <DatePicker
                                                     className="form-control" 
@@ -748,7 +987,18 @@ const FormEmissao = (props: any) => {
                                                     }
                                                     />
                                             </div>
-                                            <div className="col-md-4">
+                                            <div className="col-md-6">
+                                                <label  className="form-label">Moeda</label>
+                                                <select className="form-control"
+                                                    value={moeda_id}
+                                                    onChange={event => setMoeda_id(event.target.value? Number(event.target.value) : undefined)}
+
+                                                    >
+                                                    <option value="">[Selecione]</option>
+                                                    {moedas.map((rs: iMoedas) => <option value={rs.moeda_id}>{rs.descricao}</option>)}
+                                                </select>
+                                            </div>
+                                            <div className="col-md-6">
                                                 <label  className="form-label">Valor segurado</label>
                                                 <Controller
                                                     name="valor"
@@ -766,6 +1016,18 @@ const FormEmissao = (props: any) => {
                                                 />
                                             </div>
 
+
+                                            <div className="col-md-12" >
+                                                <label  className="form-label">Objeto</label>
+                                                <JoditEditorComponent
+                                                key="editor-corretor"
+                                                    //initialValue="<p>Olá mundo!</p>"
+                                                    onChange={(value) => setObjeto(value)}
+                                                />
+                                            </div>
+
+
+
                                             <div className="col-md-12">
                                                 <label  className="form-label">Modalidade</label>
                                                 <select className="form-control" value={modalidade_id} onChange={event => setModalidade_id(event.target.value ? Number(event.target.value) : undefined)}>
@@ -773,29 +1035,65 @@ const FormEmissao = (props: any) => {
                                                     {modalidades}
                                                 </select>
                                             </div>
-                                            <div className="col-md-4">
+
+                                            <div className="col-md-12">
+                                                <label  className="form-label">Texto modalidade</label>
+                                                <JoditEditorComponent
+                                                key="editor-corretor"
+                                                    initialValue={modalidadeTexto}
+                                                    onChange={(value) => setModalidadeTexto(value)}
+                                                />
+                                            </div>
+
+
+                                            <div className="col-md-12">
                                                 <label  className="form-label">Multas</label>
-                                                <select className="form-control" >
+                                                <select className="form-control" value={multa} onChange={event => setMulta(event.target.value)}>
                                                     <option value="">[Selecione]</option>
-                                                    <option value="">Sim</option>
-                                                    <option value="">Não</option>
+                                                    <option value="1">Sim</option>
+                                                    <option value="0">Não</option>
                                                 </select>
                                             </div>
-                                            <div className="col-md-4">
+                                            <div className="col-md-12" style={{ display: multa == '1' ? 'table-row' : 'none'}}>
+                                                <label  className="form-label">Texto multa</label>
+                                                <JoditEditorComponent
+                                                key="editor-corretor"
+                                                    //initialValue="<p>Olá mundo!</p>"
+                                                    onChange={(value) => setTextoMulta(value)}
+                                                />
+                                            </div>
+
+                                            <div className="col-md-12">
                                                 <label  className="form-label">Trabalhista e previdenciário</label>
-                                                <select className="form-control" >
+                                                <select className="form-control" value={trabalhista} onChange={event => setTrabalhista(event?.target.value)}>
                                                     <option value="">[Selecione]</option>
-                                                    <option value="">Sim</option>
-                                                    <option value="">Não</option>
+                                                    <option value="1">Sim</option>
+                                                    <option value="0">Não</option>
                                                 </select>
                                             </div>
-                                            <div className="col-md-4">
+                                            <div className="col-md-12" style={{ display: trabalhista == '1' ? 'table-row' : 'none'}}>
+                                                <label  className="form-label">Texto trabalhista</label>
+                                                <JoditEditorComponent
+                                                key="editor-corretor"
+                                                    //initialValue="<p>Olá mundo!</p>"
+                                                    onChange={(value) => setTextoTrabalhista(value)}
+                                                />
+                                            </div>
+                                            <div className="col-md-12">
                                                 <label  className="form-label">Fiscal e tributário</label>
-                                                <select className="form-control" >
+                                                <select className="form-control" value={fiscal} onChange={event => setFiscal(event.target.value)}>
                                                     <option value="">[Selecione]</option>
-                                                    <option value="">Sim</option>
-                                                    <option value="">Não</option>
+                                                    <option value="1">Sim</option>
+                                                    <option value="0">Não</option>
                                                 </select>
+                                            </div>
+                                            <div className="col-md-12" style={{ display: fiscal == '1' ? 'table-row' : 'none'}}>
+                                                <label  className="form-label">Texto fiscal e tributário</label>
+                                                <JoditEditorComponent
+                                                key="editor-corretor"
+                                                    //initialValue="<p>Olá mundo!</p>"
+                                                    onChange={(value) => setTextoFiscal(value)}
+                                                />
                                             </div>
                                             
 
@@ -818,13 +1116,13 @@ const FormEmissao = (props: any) => {
                                             <div className="col-md-3">
                                                 <label  className="form-label">Valor do prêmio</label>
                                                 <Controller
-                                                    name="valorPremio"
+                                                    name="premio"
                                                     control={control}
                                                     render={({ field }) => (
                                                     <CurrencyInput
-                                                        value={valorPremio}
+                                                        value={premio}
                                                         onValueChange={(value) => field.onChange(value)} // Atualiza corretamente no RHF
-                                                        onChange={event => setValorPremio(event.target.value)}
+                                                        onChange={event => setPremio(event.target.value)}
                                                         placeholder="Digite um valor"
                                                         className="form-control"
                                                         
@@ -857,7 +1155,7 @@ const FormEmissao = (props: any) => {
 
                                             <div className="col-md-3">
                                                 <label  className="form-label">% de comissão</label>
-                                                <input type="number" className="form-control" />
+                                                <input type="number" className="form-control" value={percentualComissao} onChange={event => setPercentualComissao(event.target.value ? Number(event.target.value) : undefined)} />
                                             </div>
                                             <div className="col-md-3">
                                                 <label  className="form-label">Valor do spread</label>
@@ -869,6 +1167,31 @@ const FormEmissao = (props: any) => {
                                                         value={valorSpread}
                                                         onValueChange={(value) => field.onChange(value)} // Atualiza corretamente no RHF
                                                         onChange={event => setValorSpread(event.target.value)}
+                                                        placeholder="Digite um valor"
+                                                        className="form-control"
+                                                        
+                                                    />
+                                                    )}
+                                                />
+                                            </div>
+                                            <div className="col-md-3">
+                                                <label  className="form-label">Pago</label>
+                                                <select className="form-control" value={pago} onChange={event => setPago(event.target.value)}>
+                                                    <option value="">[Selecione]</option>
+                                                    <option value="1">Sim</option>
+                                                    <option value="0">Não</option>
+                                                </select>
+                                            </div>
+                                            <div className="col-md-3" style={{ display: pago == '1' ? 'table-row' : 'none'}}>
+                                                <label  className="form-label">Valor pago</label>
+                                                <Controller
+                                                    name="valorPago"
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                    <CurrencyInput
+                                                        value={valorPago}
+                                                        onValueChange={(value) => field.onChange(value)} // Atualiza corretamente no RHF
+                                                        onChange={event => setValorPago(event.target.value)}
                                                         placeholder="Digite um valor"
                                                         className="form-control"
                                                         
@@ -932,6 +1255,44 @@ const FormEmissao = (props: any) => {
 
                     </div>
                 </div>
+
+
+
+                <Dialog
+                        open={open}
+                        TransitionComponent={Transition}
+                        keepMounted
+                        onClose={() => setOpen(false)}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                        maxWidth="xs"
+                        fullWidth
+                        >
+                        <DialogTitle id="alert-dialog-title">{titulo}</DialogTitle>
+                        <DialogContent sx={{ display: "flex", flexDirection: "column" }}>
+
+                            <div style={{ textAlign: 'justify' }}>
+                                {frase}
+                            </div>
+
+                        </DialogContent>
+                        <DialogActions>
+
+
+
+                            <Button color="error" variant="contained" onClick={() => setOpen(false)} style={{ display: acao == 'salvar' ? 'table-row' : 'none' }}>
+                                Cancelar
+                            </Button>
+                            <Button color="success" variant="contained" onClick={() => salva()} style={{ display: acao == 'salvar' ? 'table-row' : 'none' }}>
+                                Ok
+                            </Button>
+
+
+                        </DialogActions>
+                    </Dialog>
+
+
+
 
         </div>
 

@@ -65,7 +65,6 @@ const Corretor = (props: any) => {
 	}, [dadosUsuarios])
 
 
-
     const carregaModalidades = () => {
 
 
@@ -248,7 +247,7 @@ const Corretor = (props: any) => {
                     </div>
             </div>
             
-            <ModalModalidade modalidade_id={modalidade_id} cliente_id={clienteModal_id} show={show} setShow={setShow} now={now} setNow={setNow} carregaModalidades={carregaModalidades}/>
+            <ModalModalidade modalidade_id={modalidade_id} show={show} setShow={setShow} now={now} setNow={setNow} carregaModalidades={carregaModalidades}/>
 
         </div>
 

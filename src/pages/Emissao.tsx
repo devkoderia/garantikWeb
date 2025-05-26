@@ -18,18 +18,10 @@ const Produtor = (props: any) => {
 
     interface iDados {
 
+        pin: string,
         emissao_id: number,
-        cliente_id: number,
-        nome: string,
-        cpf: string,
-        valortotal: string,
-        situacao: string,        
-        nomeFantasia: string,
-        quantidade: string,
-        tipoJuridico: string,
-        cnpj: string,
-        razaoSocial: string,
-        
+        dataEmissao: string,
+        valor: string,
         
 
     }
@@ -73,26 +65,21 @@ const Produtor = (props: any) => {
     const carregaEmissoes = () => {
 
 
-        var dataPost = {
-
-            cliente_id: cliente_id,
-
-        }
-
         setCarregando('block')
 
-        api.post('emissaoListaTodos', dataPost).then((result) => {
+        api.get(`emissaoListaTodos/${cliente_id}`).then((result) => {
 
-            //console.log(result.data)
+            console.log(result.data)
 
             setResultado(result.data.map((rs: iDados) => {
 
                 return {
 
                     emissao_id: rs.emissao_id,
-                    nome: rs.tipoJuridico == 'F' ? rs.nome : rs.razaoSocial,
-                    cpf: rs.tipoJuridico == 'F' ? rs.cpf : rs.cnpj,
-                    tipoJuridico: rs.tipoJuridico,
+                    
+                    pin: rs.pin,
+                    dataEmissao: rs.dataEmissao,
+                    valor: rs.valor,
                     
 
                 }
@@ -125,28 +112,34 @@ const Produtor = (props: any) => {
     const columns: MRT_ColumnDef<iDados>[] = [
 
         {
-            accessorKey: 'tipoJuridico',
-            header: 'Tipo',
+            accessorKey: 'pin',
+            header: 'Pin',
             Cell: ({ renderedCellValue, row }) => (
             
-                <Badge style={{ fontSize: '0.7rem' }} bg={ renderedCellValue == 'J' ? 'info' : 'primary'}>{renderedCellValue == 'J' ? 'Pessoa Jurídica' : 'Pessoa Física'}</Badge>
+                <Badge style={{ fontSize: '0.7rem' }} bg='warning'>{renderedCellValue}</Badge>
            
             ),
 
         },
 
         {
-            accessorKey: 'nome',
-            header: 'Nome/Razão Social',
+            accessorKey: 'dataEmissao',
+            header: 'Emissão',
             
 
         },
 
 
         {
-            accessorKey: 'cpf',
-            header: 'CPF/CNPJ',
-            
+            accessorKey: 'valor',
+            header: 'Valor',
+            muiTableHeadCellProps: {
+                align: 'right',
+              },
+            muiTableBodyCellProps: {
+                align: 'right',
+              },
+
 
         },
 

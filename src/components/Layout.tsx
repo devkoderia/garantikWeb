@@ -151,7 +151,7 @@ const Layout = () => {
                 <li><a className="dropdown-item" href="/Tomador"><i className='material-icons-outlined'>source</i>Tomador</a></li>
                 <li><a className="dropdown-item" href="/Favorecido"><i className='material-icons-outlined'>backup</i>Favorecido</a></li>
                 <li><a className="dropdown-item" href="/Emissao"><i className='material-icons-outlined'>account_circle</i>Emissão</a></li>
-                <li><a className="dropdown-item" href="/Fianca"><i className='material-icons-outlined'>note_alt</i>Fiança</a></li>
+                
                 
 
             </ul>
