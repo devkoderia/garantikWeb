@@ -42,7 +42,7 @@ const ModalEmissao = (props: any) => {
                 <Modal.Title id="example-modal-sizes-title-xl">
 
                     
-                        Emissão
+                        Emissão {props.pin}
 
 
 

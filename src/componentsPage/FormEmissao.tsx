@@ -168,6 +168,8 @@ const FormEmissao = (props: any) => {
     const [frase, setFrase] = useState<string | undefined>('')
 
     
+
+    
     const { control, handleSubmit } = useForm({
         defaultValues: {
           valor: "",
@@ -217,8 +219,45 @@ const FormEmissao = (props: any) => {
 
         api.get(`emissaoListaUm/${props.emissao_id}`).then((result) => {
 
-            console.log(result.data, 'aqui')
-        		
+            //console.log(result.data[0], 'aqui')
+
+            var data = result.data[0]
+            
+            setCliente_id(data.cliente_id)
+            setDate(data.dataEmissao ? new Date(moment(data.dataEmissao, 'DD/MM/YYYY').format('YYYY-MM-DD')) : new Date())
+            setDate2(data.dataInicio? new Date(moment(data.dataInicio, 'DD/MM/YYYY').format('YYYY-MM-DD')) : new Date())
+            setDataVencimento(data.dataVencimento? new Date(moment(data.dataVencimento, 'DD/MM/YYYY').format('YYYY-MM-DD')) : new Date())
+            setMoeda_id(data.moeda_id)
+            setObjeto(data.objeto)
+            setModalidade_id(data.modalidade_id)
+            setModalidadeTexto(data.modalidadeTexto)
+            setMulta(data.multa != undefined ? data.multa == true ? '1' : '0' : '')
+            setTextoMulta(data.textoMulta)
+            setTrabalhista(data.trabalhista != undefined ? data.trabalhista == true? '1' : '0' : '')
+            setTextoTrabalhista(data.textoTrabalhista)
+            setFiscal(data.fiscal != undefined? data.fiscal == true? '1' : '0' : '')
+            setTextoFiscal(data.textoFiscal)
+
+            setValor(data.valor? data.valor : '')	
+            setDias(data.dias? data.dias : '')
+            setDataVencimentoIndeterminado(data.dataVencimentoIndeterminado != undefined ? data.dataVencimentoIndeterminado == true ? '1' : '0' : '')
+
+            setTomadores(data.tomadores)
+            setFavorecidos(data.favorecidos)
+            setValorComissao(data.valorComissao)
+            setValorSpread(data.valorSpread)
+            setPago(data.pago != undefined? data.pago == true? '1' : '0' : '')
+            setPremio(data.premio)
+            setTaxa(data.taxa)
+            setValorPago(data.valorPago)
+            setPercentualComissao(data.percentualComissao)
+            setValorSpread(data.valorSpread)
+
+            setObservacoesCorretor(data.observacoesCorretor)
+            setObservacoesSubscritor(data.observacoesSubscritor)
+            
+
+
         }).catch((err) => {
             console.log(err.response)
         })
@@ -602,92 +641,116 @@ const FormEmissao = (props: any) => {
     		
         setOpen(false)
 
-        var dataPost = {
+        
+        if (props.emissao_id) {
 
-            cliente_id: cliente_id,
-            dataEmissao: moment(startDate).format('YYYY-MM-DD'),
-            dataInicio: moment(startDate2).format('YYYY-MM-DD'),
-            dataVencimento: moment(dataVencimento).format('YYYY-MM-DD'),
-            dias: dias,
-            dataVencimentoIndeterminado: dataVencimentoIndeterminado == '1' ? true : dataVencimentoIndeterminado == '0' ? false : null,
-            moeda_id: moeda_id,
-            valor: valor ? Number(valor.replaceAll('.', '').replaceAll(',', '.')) : null,
-            objeto: objeto,
-            modalidade_id: modalidade_id,
-            modalidadeTexto: modalidadeTexto,
-            taxa: taxa,
-            premio: premio ? Number(premio.replaceAll('.', '').replaceAll(',', '.')) : null,
-            pago: pago == '1' ? true : pago == '0'? false : null,
-            valorPago:  valorPago ? Number(valorPago.replaceAll('.', '').replaceAll(',', '.')) : null,
-            //minuta: minuta,
-            //garantia: garantia,
-            trabalhista: trabalhista == '1' ? true : trabalhista == '0' ? false : null,
-            fiscal: fiscal == '1'? true : fiscal == '0' ? false : null,
-            textoTrabalhista: textoTrabalhista,
-            textoFiscal: textoFiscal,
+            var dataPostPut = {
+
+                cliente_id: cliente_id,
+                dataEmissao: moment(startDate).format('YYYY-MM-DD'),
+                dataInicio: moment(startDate2).format('YYYY-MM-DD'),
+                dataVencimento: moment(dataVencimento).format('YYYY-MM-DD'),
+                dias: dias,
+                dataVencimentoIndeterminado: dataVencimentoIndeterminado == '1' ? true : dataVencimentoIndeterminado == '0' ? false : null,
+                moeda_id: moeda_id,
+                valor: valor ? Number(valor.toString().replaceAll('.', '').replaceAll(',', '.')) : null,
+                objeto: objeto,
+                modalidade_id: modalidade_id,
+                modalidadeTexto: modalidadeTexto,
+                taxa: taxa,
+                premio: premio ? Number(premio.toString().replaceAll('.', '').replaceAll(',', '.')) : null,
+                pago: pago == '1' ? true : pago == '0'? false : null,
+                valorPago:  valorPago ? Number(valorPago.toString().replaceAll('.', '').replaceAll(',', '.')) : null,
+                
+                trabalhista: trabalhista == '1' ? true : trabalhista == '0' ? false : null,
+                fiscal: fiscal == '1'? true : fiscal == '0' ? false : null,
+                textoTrabalhista: textoTrabalhista,
+                textoFiscal: textoFiscal,
+                
+                multa: multa == '1' ? true : multa == '0'? false : null,
+                textoMulta: textoMulta,
+                ad_usr: usuario_id_session,
+                observacoesCorretor: observacoesCorretor,
+                observacoesSubscritor: observacoesSubscritor,
+                valorComissao: valorComissao ? Number(valorComissao.toString().replaceAll('.', '').replaceAll(',', '.')) : null,
+                percentualComissao: percentualComissao,
+                valorSpread: valorSpread ? Number(valorSpread.toString().replaceAll('.', '').replaceAll(',', '.')) : null,
+                favorecidos: favorecidos.map((rs: iFavorecido) => rs.favorecido_id),
+                tomadores: tomadores.map((rs: iTomador) => rs.tomador_id),
+        
+            }
+
+            api.put(`emissao/${props.emissao_id}`, dataPostPut).then((result) => {
+
+                if (result.data.status == 'ok') {
+
+                    toast.success('Registro salvo com sucesso!')
+                    
+                    props.carregaEmissoes()
+                    
+                		
+                }
+            		
+            }).catch((err) => {
+                console.log(err.response)
+            })
+
+        		
+        } else {
+
+            var dataPost = {
+
+                cliente_id: cliente_id,
+                dataEmissao: moment(startDate).format('YYYY-MM-DD'),
+                dataInicio: moment(startDate2).format('YYYY-MM-DD'),
+                dataVencimento: moment(dataVencimento).format('YYYY-MM-DD'),
+                dias: dias,
+                dataVencimentoIndeterminado: dataVencimentoIndeterminado == '1' ? true : dataVencimentoIndeterminado == '0' ? false : null,
+                moeda_id: moeda_id,
+                valor: valor ? Number(valor.toString().replaceAll('.', '').replaceAll(',', '.')) : null,
+                objeto: objeto,
+                modalidade_id: modalidade_id,
+                modalidadeTexto: modalidadeTexto,
+                taxa: taxa,
+                premio: premio ? Number(premio.toString().replaceAll('.', '').replaceAll(',', '.')) : null,
+                pago: pago == '1' ? true : pago == '0'? false : null,
+                valorPago:  valorPago ? Number(valorPago.toString().replaceAll('.', '').replaceAll(',', '.')) : null,
+                
+                trabalhista: trabalhista == '1' ? true : trabalhista == '0' ? false : null,
+                fiscal: fiscal == '1'? true : fiscal == '0' ? false : null,
+                textoTrabalhista: textoTrabalhista,
+                textoFiscal: textoFiscal,
+                
+                multa: multa == '1' ? true : multa == '0'? false : null,
+                textoMulta: textoMulta,
+                ad_usr: usuario_id_session,
+                observacoesCorretor: observacoesCorretor,
+                observacoesSubscritor: observacoesSubscritor,
+                valorComissao: valorComissao ? Number(valorComissao.toString().replaceAll('.', '').replaceAll(',', '.')) : null,
+                percentualComissao: percentualComissao,
+                valorSpread: valorSpread ? Number(valorSpread.toString().replaceAll('.', '').replaceAll(',', '.')) : null,
+                favorecidos: favorecidos.map((rs: iFavorecido) => rs.favorecido_id),
+                tomadores: tomadores.map((rs: iTomador) => rs.tomador_id),
+    
+    
+            }
+
+            api.post('emissao', dataPost).then((result) => {
+
+
+                //console.log(result.data)
+                toast.success('Salvo com sucesso!')
+                setOpen(false)
+                props.setShow(false)
+                props.carregaEmissoes()
             
-            multa: multa == '1' ? true : multa == '0'? false : null,
-            textoMulta: textoMulta,
-            ad_usr: usuario_id_session,
-            observacoesCorretor: observacoesCorretor,
-            observacoesSubscritor: observacoesSubscritor,
-            valorComissao: valorComissao ? Number(valorComissao.replaceAll('.', '').replaceAll(',', '.')) : null,
-            percentualComissao: percentualComissao,
-            valorSpread: valorSpread ? Number(valorSpread.replaceAll('.', '').replaceAll(',', '.')) : null,
-            favorecidos: favorecidos.map((rs: iFavorecido) => rs.favorecido_id),
-            tomadores: tomadores.map((rs: iTomador) => rs.tomador_id),
-
-            /*
-            cliente_id: Joi.number().integer().required(),
-            dataEmissao: Joi.date().required(),
-            dataInicio: Joi.date().required(),
-            dataVencimento: Joi.date().allow(null, ''),
-            dias: Joi.number().integer().allow(null, ''),
-            dataVencimentoIndeterminado: Joi.boolean().allow(null),
-            moeda_id: Joi.number().integer().required(),
-            valor: Joi.number().required(),
-            objeto: Joi.string().required(),
-            modalidade_id: Joi.number().required(),
-            modalidadeTexto: Joi.string().required(),
-            taxa: Joi.number().allow(null),
-            premio: Joi.number().allow(null),
-            pago: Joi.boolean().allow(null),
-            valorPago: Joi.number().allow(null),
-            minuta: Joi.boolean().allow(null),
-            garantia: Joi.boolean().allow(null),
-            trabalhista: Joi.boolean().allow(null),
-            fiscal: Joi.boolean().allow(null),
-            textoTrabalhista: Joi.string().allow(null, ''),
-            textoFiscal: Joi.string().allow(null, ''),
-            ad_usr: Joi.number().integer().required(),
-            observacoesCorretor: Joi.string().allow(null, ''),
-            observacoesSubscritor: Joi.string().allow(null, ''),
-            valorComissao: Joi.number().allow(null),
-            percentualComissao: Joi.number().allow(null),
-            valorSpread: Joi.number().allow(null),
-            favorecidos: Joi.array().items(Joi.number().integer()).min(1).required(),
-            tomadores: Joi.array().items(Joi.number().integer()).min(1).required(),
-            */
+            }).catch((err) => {
+                console.log(err.response)
+                toast.error('Erro ao salvar!')
+            })
 
 
         }
-
-        console.log(dataPost)
-        //return false
-
-        api.post('emissao', dataPost).then((result) => {
-
-
-            console.log(result.data)
-            toast.success('Salvo com sucesso!')
-            setOpen(false)
-            props.setShow(false)
-            props.carregaEmissoes()
-        
-        }).catch((err) => {
-            console.log(err.response)
-            toast.error('Erro ao salvar!')
-        })
 
     }
 
@@ -1021,7 +1084,7 @@ const FormEmissao = (props: any) => {
                                                 <label  className="form-label">Objeto</label>
                                                 <JoditEditorComponent
                                                 key="editor-corretor"
-                                                    //initialValue="<p>Olá mundo!</p>"
+                                                    initialValue={objeto}
                                                     onChange={(value) => setObjeto(value)}
                                                 />
                                             </div>
@@ -1058,7 +1121,7 @@ const FormEmissao = (props: any) => {
                                                 <label  className="form-label">Texto multa</label>
                                                 <JoditEditorComponent
                                                 key="editor-corretor"
-                                                    //initialValue="<p>Olá mundo!</p>"
+                                                    initialValue={textoMulta}
                                                     onChange={(value) => setTextoMulta(value)}
                                                 />
                                             </div>
@@ -1075,7 +1138,7 @@ const FormEmissao = (props: any) => {
                                                 <label  className="form-label">Texto trabalhista</label>
                                                 <JoditEditorComponent
                                                 key="editor-corretor"
-                                                    //initialValue="<p>Olá mundo!</p>"
+                                                    initialValue={textoTrabalhista}
                                                     onChange={(value) => setTextoTrabalhista(value)}
                                                 />
                                             </div>
@@ -1091,7 +1154,7 @@ const FormEmissao = (props: any) => {
                                                 <label  className="form-label">Texto fiscal e tributário</label>
                                                 <JoditEditorComponent
                                                 key="editor-corretor"
-                                                    //initialValue="<p>Olá mundo!</p>"
+                                                    initialValue={textoFiscal}
                                                     onChange={(value) => setTextoFiscal(value)}
                                                 />
                                             </div>
@@ -1221,7 +1284,7 @@ const FormEmissao = (props: any) => {
                                                 <label  className="form-label">Observações do corretor</label>
                                                 <JoditEditorComponent
                                                 key="editor-corretor"
-                                                    //initialValue="<p>Olá mundo!</p>"
+                                                    initialValue={observacoesCorretor}
                                                     onChange={(value) => setObservacoesCorretor(value)}
                                                 />
                                             </div>
@@ -1229,7 +1292,7 @@ const FormEmissao = (props: any) => {
                                                 <label  className="form-label">Observações do subscritor</label>
                                                 <JoditEditorComponent
                                                 key="editor-subscritor"
-                                                    //initialValue="<p>Olá mundo!</p>"
+                                                    initialValue={observacoesSubscritor}
                                                     onChange={(value) => setObservacoesSubscritor(value)}
                                                 />
                                             </div>
@@ -1238,6 +1301,128 @@ const FormEmissao = (props: any) => {
                                         </form>
 
                                     </Tab>
+
+                                {
+                                    props.emissao_id && (
+
+                                        <Tab eventKey="pdf" title={
+                                            <>
+                                            <div className="dropdown-item d-flex align-items-center gap-2 py-2">
+                                                <i
+                                                        className="material-icons-outlined">print</i>
+                                                        PDF
+                                            
+                                            </div>
+                                            </>
+                                        }>
+                                            
+                                            <form className="row g-3">
+
+                                                <div className="col-md-12">
+
+                                                    <div className="btn-group">
+                                                        <button type="button" className="btn btn-primary btn-sm" style={{ cursor: 'auto'}}>Fiança</button>
+                                                        <button
+                                                            type="button"
+
+                                                            className="btn btn-primary btn-sm split-bg-primary dropdown-toggle dropdown-toggle-split"
+                                                            data-bs-toggle="dropdown"
+                                                        >
+                                                            <span className="visually-hidden">Toggle Dropdown</span>
+                                                        </button>
+
+                                                        <div className="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">
+                                                            <a className="dropdown-item" href="#">Download</a>
+                                                            <a className="dropdown-item" href="#">Gerar</a>
+                                                            <a className="dropdown-item" href="#">Apagar</a>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="btn-group" style={{ marginLeft: 5}}>
+                                                        <button type="button" className="btn btn-success btn-sm" style={{ cursor: 'auto'}}>Minuta</button>
+                                                        <button
+                                                            type="button"
+
+                                                            className="btn btn-success btn-sm split-bg-primary dropdown-toggle dropdown-toggle-split"
+                                                            data-bs-toggle="dropdown"
+                                                        >
+                                                            <span className="visually-hidden">Toggle Dropdown</span>
+                                                        </button>
+
+                                                        <div className="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">
+                                                            <a className="dropdown-item" href="#">Download</a>
+                                                            <a className="dropdown-item" href="#">Gerar</a>
+                                                            <a className="dropdown-item" href="#">Apagar</a>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="btn-group"  style={{ marginLeft: 5}}>
+                                                        <button type="button" className="btn btn-secondary btn-sm" style={{ cursor: 'auto'}}>Proposta não disponível</button>
+                                                        <button
+                                                            type="button"
+
+                                                            className="btn btn-secondary btn-sm split-bg-primary dropdown-toggle dropdown-toggle-split"
+                                                            data-bs-toggle="dropdown"
+                                                        >
+                                                            <span className="visually-hidden">Toggle Dropdown</span>
+                                                        </button>
+
+                                                        <div className="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">
+                                                            <a className="dropdown-item" href="#">Download</a>
+                                                            <a className="dropdown-item" href="#">Gerar</a>
+                                                            <a className="dropdown-item" href="#">Apagar</a>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="btn-group" style={{ marginLeft: 5}}>
+                                                        <button type="button" className="btn btn-info btn-sm" style={{ cursor: 'auto'}}>NP</button>
+                                                        <button
+                                                            type="button"
+
+                                                            className="btn btn-info btn-sm split-bg-primary dropdown-toggle dropdown-toggle-split"
+                                                            data-bs-toggle="dropdown"
+                                                        >
+                                                            <span className="visually-hidden">Toggle Dropdown</span>
+                                                        </button>
+
+                                                        <div className="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">
+                                                            <a className="dropdown-item" href="#">Download</a>
+                                                            <a className="dropdown-item" href="#">Gerar</a>
+                                                            <a className="dropdown-item" href="#">Apagar</a>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="btn-group" style={{ marginLeft: 5}}>
+                                                        <button type="button" className="btn btn-warning btn-sm" style={{ cursor: 'auto'}}>CCG</button>
+                                                        <button
+                                                            type="button"
+
+                                                            className="btn btn-warning btn-sm split-bg-primary dropdown-toggle dropdown-toggle-split"
+                                                            data-bs-toggle="dropdown"
+                                                        >
+                                                            <span className="visually-hidden">Toggle Dropdown</span>
+                                                        </button>
+
+                                                        <div className="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">
+                                                            <a className="dropdown-item" href="#">Download</a>
+                                                            <a className="dropdown-item" href="#">Gerar</a>
+                                                            <a className="dropdown-item" href="#">Apagar</a>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                                    
+
+    
+                                            </form>
+    
+                                        </Tab>
+
+                                    )
+                                }
+
+                                    
 
 
 

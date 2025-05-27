@@ -13,15 +13,42 @@ const Produtor = (props: any) => {
 
     const [show, setShow] = useState<boolean>(false)
     const [now, setNow] = useState<string | undefined>('')
+    const [pin, setPin] = useState<string | undefined>('')
 
 
+    interface iFavorecidos {
+
+        favorecido_id: number,
+        tipoJuridico: string,
+        nome: string,
+        cnpj: string,
+        cpf: string,
+        nomeFantasia: string,
+
+    }
+
+    interface iTomadores {
+
+        tomador_id: number,
+        nomeFantasia: string,
+        tipoJuridico: string,
+        nome: string,
+        cnpj: string,
+        cpf: string,
+
+    }
 
     interface iDados {
 
         pin: string,
         emissao_id: number,
         dataEmissao: string,
+        dataVencimento: string,
+        favorecidos: iFavorecidos[],
         valor: string,
+        modalidadeDescricao: string,
+        tomadores: iTomadores[],
+
         
 
     }
@@ -69,23 +96,9 @@ const Produtor = (props: any) => {
 
         api.get(`emissaoListaTodos/${cliente_id}`).then((result) => {
 
-            console.log(result.data)
+            //console.log(result.data)
 
-            setResultado(result.data.map((rs: iDados) => {
-
-                return {
-
-                    emissao_id: rs.emissao_id,
-                    
-                    pin: rs.pin,
-                    dataEmissao: rs.dataEmissao,
-                    valor: rs.valor,
-                    
-
-                }
-
-
-            }))
+            setResultado(result.data)
             setCarregando('none')
 
         }).catch((err) => {
@@ -129,6 +142,13 @@ const Produtor = (props: any) => {
 
         },
 
+        {
+            accessorKey: 'dataVencimento',
+            header: 'Vencimento',
+            
+
+        },
+
 
         {
             accessorKey: 'valor',
@@ -141,6 +161,52 @@ const Produtor = (props: any) => {
               },
 
 
+        },
+        {
+            accessorKey: 'modalidadeDescricao',
+            header: 'Modalidade',
+            
+
+        },
+        {
+            accessorKey: 'tomadores',
+            header: 'Tomadores',
+            Cell: ({ row }) => {
+                const tomadores = row.original.tomadores;
+        
+                
+                return tomadores && tomadores.length > 0 ? (
+                    <ul style={{ paddingLeft: '1rem', margin: 0 }}>
+                        {tomadores.map((rs: iTomadores) => 
+
+                            <li>{rs.tipoJuridico == 'F' ? rs.nome : rs.nomeFantasia}</li>
+
+                        )}
+                    </ul>
+                ) : (
+                    <span>-</span>
+                );
+            },
+        },
+        {
+            accessorKey: 'favorecidos',
+            header: 'Favorecidos',
+            Cell: ({ row }) => {
+                const favorecidos = row.original.favorecidos;
+        
+                
+                return favorecidos && favorecidos.length > 0 ? (
+                    <ul style={{ paddingLeft: '1rem', margin: 0 }}>
+                        {favorecidos.map((rs: iFavorecidos) => 
+
+                            <li>{rs.tipoJuridico == 'F' ? rs.nome : rs.nomeFantasia}</li>
+
+                        )}
+                    </ul>
+                ) : (
+                    <span>-</span>
+                );
+            },
         },
 
 
@@ -170,7 +236,7 @@ const Produtor = (props: any) => {
             <div className="col-md-12" style={{ marginBottom: 20}}>
                 <div className="d-md-flex d-grid align-items-center gap-2">
                     
-                    <button type="button" className="btn btn-primary" onClick={() => {setNow(moment().format('YYYY-MM-DD HH:mm:ss'));setCliente_id(undefined);setEmissao_id(undefined);setShow(true)}}>+ Novo</button>
+                    <button type="button" className="btn btn-primary" onClick={() => {setNow(moment().format('YYYY-MM-DD HH:mm:ss'));setPin(undefined);setCliente_id(undefined);setEmissao_id(undefined);setShow(true)}}>+ Novo</button>
                     <button type="button" className="btn btn-success" disabled>Exportar XLSX</button>
                 
                 </div>
@@ -240,6 +306,7 @@ const Produtor = (props: any) => {
                                             onClick: () => {
                                                 setShow(true);
                                                 setEmissao_id(row.original.emissao_id)
+                                                setPin(row.original.pin)
                                                 setNow(moment().format('YYYYMMDDHHmmss'))
                                             },
                                             sx: {
@@ -256,7 +323,7 @@ const Produtor = (props: any) => {
                     </div>
             </div>
             
-            <ModalEmissao emissao_id={emissao_id} cliente_id={cliente_id} show={show} setShow={setShow} now={now} setNow={setNow} carregaEmissoes={carregaEmissoes}/>
+            <ModalEmissao emissao_id={emissao_id} pin={pin} cliente_id={cliente_id} show={show} setShow={setShow} now={now} setNow={setNow} carregaEmissoes={carregaEmissoes}/>
 
         </div>
 
